@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alumni Nexus - Homepage</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(180deg, #fafdff, #e3f4fb, #cfeafb); min-height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; }
+    .container { background: rgba(255, 255, 255, 0.92); padding: 35px; border-radius: 18px; width: 480px; text-align: center; box-shadow: 0px 15px 35px rgba(0,0,0,0.15); }
+    .logo { display: flex; align-items: center; justify-content: center; margin-bottom: 25px; }
+    .logo-icon { width: 60px; height: 60px; background: linear-gradient(135deg, #1e90ff, #0066ff); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 26px; font-weight: bold; box-shadow: 0px 4px 12px rgba(0,0,0,0.2); }
+    .logo-text { margin-left: 15px; font-size: 28px; font-weight: bold; color: #1e3a6f; letter-spacing: 1px; }
+    h1 { color: #2c3e50; font-size: 32px; margin-bottom: 20px; }
+    p { color: #555; font-size: 16px; line-height: 1.6; margin-bottom: 25px; }
+    .btn { display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #1e90ff, #0066ff); color: #fff; text-decoration: none; border-radius: 12px; font-weight: bold; transition: transform 0.2s ease, box-shadow 0.2s ease; margin: 10px; }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0px 8px 20px rgba(0,0,0,0.2); }
+    
+    /* Flash message styles */
+    .flash-messages { margin-bottom: 20px; }
+    .flash { padding: 12px; margin: 5px 0; border-radius: 8px; }
+    .flash.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .flash.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <div class="logo-icon">AN</div>
+      <div class="logo-text">Alumni Nexus</div>
+    </div>
+    
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    
+    <h1>Welcome to Alumni Nexus</h1>
+    <p>Connect with your college community. Join students, alumni, and administrators on one unified platform.</p>
+    
+    <div>
+      <a href="{{ url_for('register') }}" class="btn">Register Now</a>
+      <a href="#" class="btn" style="background: linear-gradient(135deg, #28a745, #20c997);">Login</a>
+    </div>
+  </div>
+</body>
+</html>

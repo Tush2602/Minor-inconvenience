@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PEC Alumni Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-1: #f6fbff;
+      --bg-2: #eef8ff;
+      --accent-1: #6aa7ff;
+      --accent-2: #83e3ff;
+      --heading-color: #0b3d66;
+      --text-color: #0b1220;
+      --muted-color: #6b7280;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+      margin: 0;
+      background:
+        radial-gradient(circle at 10% 8%, rgba(131, 227, 255, 0.12), transparent 18%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+      color: var(--text-color);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* === Header === */
+    header {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(130, 200, 255, 0.22);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    /* Fixed header layout - removed absolute positioning for better alignment */
+    .header-brand {
+      font-size: 22px;
+      color: var(--heading-color);
+      font-weight: 700;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+      color: var(--heading-color);
+      font-weight: 700;
+    }
+    header button {
+      background: transparent;
+      border: 1px solid var(--heading-color);
+      color: var(--heading-color);
+      padding: 8px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    header button:hover {
+        background: var(--heading-color);
+        color: white;
+    }
+
+    /* === Section Layout === */
+    section {
+      padding: 50px 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h2 {
+      color: var(--heading-color);
+      margin-bottom: 10px;
+      text-align: center;
+      font-size: 2rem;
+    }
+    section > p {
+      color: var(--muted-color);
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 30px auto;
+      line-height: 1.6;
+    }
+    .section-actions {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    /* === Generic Card Styling === */
+    .card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(235,249,255,0.95));
+      border-radius: 18px;
+      padding: 22px;
+      text-align: center;
+      box-shadow:
+        0 30px 60px rgba(30,90,140,0.08),
+        0 10px 30px rgba(30,90,140,0.06);
+      border: 1px solid rgba(130,200,255,0.22);
+      transform: translateY(0);
+      transition: transform .28s ease, box-shadow .28s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow:
+        0 60px 100px rgba(30,90,140,0.10),
+        0 20px 50px rgba(30,90,140,0.08);
+    }
+     .card::before, .card::after{
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      opacity:0.1;
+      filter: blur(24px);
+      z-index: 0;
+    }
+    .card::before{ width:180px;height:180px; right:-40px; top:-60px; background:linear-gradient(180deg, var(--accent-2), var(--accent-1)); }
+    .card > * { position: relative; z-index: 1; }
+    .card h3 { color: var(--heading-color); }
+    .card p { color: var(--muted-color); line-height: 1.5; margin-top: 5px; }
+    
+    .badge {
+      display: inline-block;
+      background: rgba(106, 167, 255, 0.1);
+      color: #0b5ea8;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+
+    /* === Grids Styling === */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-top: 20px;
+    }
+    /* Cohorts grid specific override for 3 columns on desktop */
+    @media (min-width: 992px) {
+      #cohorts .grid-container {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* === Legacy Stats Grid === */
+    .legacy-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 20px;
+    }
+    @media (min-width: 768px) {
+      .legacy-stats { grid-template-columns: repeat(4, 1fr); }
+    }
+    .legacy-stats .card h3 {
+      margin: 0;
+      color: var(--accent-1);
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    .legacy-stats .card p {
+        margin-top: 5px;
+        color: var(--muted-color);
+        font-weight: 600;
+    }
+
+    /* === Action Button === */
+    .action-btn {
+      margin-top: 15px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      background: var(--accent-1);
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 6px 16px rgba(106, 167, 255, 0.3);
+    }
+    .action-btn:hover {
+      background: #5a9aff;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(106, 167, 255, 0.4);
+    }
+
+    /* === Modal Popup === */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(11, 25, 42, 0.6);
+      backdrop-filter: blur(5px);
+    }
+    .modal-content {
+      background: white;
+      margin: 8% auto;
+      padding: 30px;
+      width: 90%;
+      max-width: 450px;
+      border-radius: 18px;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+      border: 1px solid rgba(130,200,255,0.22);
+    }
+    .modal-content h3 {
+      margin-top: 0;
+      color: var(--heading-color);
+      font-size: 1.5rem;
+      text-align: center;
+    }
+    .modal-content input, .modal-content textarea {
+      width: calc(100% - 32px);
+      padding: 12px 16px;
+      margin: 8px 0;
+      border-radius: 10px;
+      border: 1px solid rgba(130, 200, 255, 0.22);
+      background: #f6fbff;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+    }
+    .modal-content input:focus, .modal-content textarea:focus {
+      outline: none;
+      border-color: var(--accent-1);
+      box-shadow: 0 0 0 3px rgba(106, 167, 255, 0.2);
+    }
+    .modal-content button.action-btn { width: 100%; }
+    .close {
+      position: absolute;
+      right: 20px; top: 18px;
+      cursor: pointer;
+      font-size: 28px;
+      color: var(--muted-color);
+      transition: color 0.2s;
+      font-weight: 300;
+    }
+    .close:hover { color: var(--heading-color); }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <!-- Restored proper header structure with brand name and logout button -->
+    <div class="header-brand">Alumni Nexus</div>
+    <h1>PEC Alumni Portal</h1>
+    <a href="homepage.html"><button>Logout</button></a>
+  </header>
+
+  <!-- Restored the Events section that was commented out -->
+  <section id="events">
+    <h2>Events</h2>
+    <p>Discover, register for, and participate in upcoming online and offline alumni events.</p>
+    <div class="grid-container" id="eventList">
+      <div class="card">
+        <h3>Annual Alumni Meet</h3>
+        <p class="badge">Ongoing</p>
+      </div>
+      <div class="card">
+        <h3>Global Networking Summit</h3>
+        <p class="badge">Upcoming</p>
+      </div>
+    </div>
+    <div class="section-actions">
+        <button class="action-btn" onclick="openModal()">+ Add Event</button>
+    </div>
+  </section>
+
+  <div id="eventModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h3>Add New Event</h3>
+      <input type="text" id="eventName" placeholder="Event Name">
+      <input type="text" id="eventStatus" placeholder="Ongoing / Upcoming">
+      <textarea id="eventDetails" placeholder="Event Details..." rows="3"></textarea>
+      <button class="action-btn" onclick="addEvent()">Save Event</button>
+    </div>
+  </div>
+
+  <section id="cohorts">
+    <h2>Cohorts & Groups</h2>
+    <p>Connect with like-minded alumni in your areas of interest and collaborate on exciting projects.</p>
+    <div class="grid-container">
+      <div class="card"><h3>Fintech Innovators</h3><p>Exploring the future of financial technology.</p><a href="fintech2.html"><button class="action-btn">View</button></a></div>
+      <div class="card"><h3>Tech Entrepreneurs</h3><p>A hub for founders and innovators.</p><button class="action-btn">View</button></div>
+      <div class="card"><h3>Open Source Contributors</h3><p>Collaborate on impactful open-source projects.</p><button class="action-btn">View</button></div>
+      <div class="card"><h3>Global Alumni Network</h3><p>Connecting PEC alumni across the globe.</p><button class="action-btn">View</button></div>
+      <div class="card"><h3>Women in Tech</h3><p>Empowering and supporting women in technology.</p><button class="action-btn">View</button></div>
+      <div class="card"><h3>Startup Mentors</h3><p>Guiding the next generation of founders.</p><button class="action-btn">View</button></div>
+    </div>
+  </section>
+
+  <section id="legacy">
+    <h2>Alumni Legacy</h2>
+    <p>Visualize the vast, interconnected network of PEC alumni and their incredible success stories.</p>
+    <div class="legacy-stats">
+      <div class="card"><h3>15,000+</h3><p>Total Alumni</p></div>
+      <div class="card"><h3>80+</h3><p>Countries Connected</p></div>
+      <div class="card"><h3>500+</h3><p>Industry Leaders</p></div>
+      <div class="card"><h3>10,000+</h3><p>Career Growth Stories</p></div>
+    </div>
+  </section>
+
+  <section id="database-access">
+    <h2>Database Access</h2>
+    <p>Access centralized databases for alumni and current student information.</p>
+    <div class="section-actions">
+        <button class="action-btn" onclick="location.href='#'">Alumni Database</button>
+        <button class="action-btn" onclick="location.href='#'" style="margin-left: 15px;">Student Database</button>
+    </div>
+  </section>
+
+  <script>
+    const modal = document.getElementById("eventModal");
+    const eventListContainer = document.getElementById("eventList");
+
+    function openModal() { modal.style.display = "block"; }
+    function closeModal() { modal.style.display = "none"; }
+
+    function addEvent() {
+      const name = document.getElementById("eventName").value;
+      const status = document.getElementById("eventStatus").value;
+      if(name && status){
+        const newEventCard = document.createElement("div");
+        newEventCard.classList.add("card");
+        
+        const eventTitle = document.createElement("h3");
+        eventTitle.textContent = name;
+        
+        const eventBadge = document.createElement("p");
+        eventBadge.classList.add("badge");
+        eventBadge.textContent = status;
+
+        newEventCard.appendChild(eventTitle);
+        newEventCard.appendChild(eventBadge);
+        
+        eventListContainer.appendChild(newEventCard);
+        
+        // Clear inputs and close modal
+        document.getElementById("eventName").value = '';
+        document.getElementById("eventStatus").value = '';
+        document.getElementById("eventDetails").value = '';
+        closeModal();
+      } else {
+        alert("Please fill in both event name and status.");
+      }
+    }
+
+    window.onclick = function(e) {
+      if (e.target == modal) closeModal();
+    }
+  </script>
+
+</body>
+</html>

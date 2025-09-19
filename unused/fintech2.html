@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fintech Innovators — Cohort</title>
+  <style>
+    :root{
+      --bg-1: #f6fbff;
+      --bg-2: #eef8ff;
+      --accent-1: #6aa7ff;
+      --accent-2: #83e3ff;
+      --muted: #6b7280;
+      --text-1: #0b3d66;
+      --text-2: #06284a;
+      --panel-bg: white;
+      --panel-shadow: 0 8px 26px rgba(10,28,60,0.04);
+      --panel-border: 1px solid rgba(10,28,60,0.03);
+    }
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: Inter, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at 10% 8%, rgba(131,227,255,0.10), transparent 18%),
+                  linear-gradient(180deg,var(--bg-1) 0%, var(--bg-2) 100%);
+      color: var(--text-1);
+      -webkit-font-smoothing:antialiased;
+    }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:18px 24px;
+      background:transparent;
+      position:sticky;
+      top:0;
+      z-index:20;
+      /* Change 1: Added relative positioning for centering the title */
+      position: relative;
+    }
+    /* Change 1: Centered the h1 title */
+    header h1{
+      margin:0;
+      font-size:20px;
+      color:var(--text-2);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      text-align: center;
+    }
+    header .controls{display:flex;gap:10px;align-items:center}
+
+    /* Updated button styles from digital_student_card */
+    .btn{
+      padding:8px 12px;
+      border-radius:10px;
+      font-weight:700;
+      cursor:pointer;
+      border: 1px solid rgba(10,30,60,0.06);
+      background: white;
+      color: var(--text-1);
+      transition: all 0.2s ease;
+    }
+    .btn:hover{
+        box-shadow: 0 4px 12px rgba(10,30,60,0.08);
+        transform: translateY(-2px);
+    }
+    .btn.primary{
+      background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      color:#fff;
+      font-weight:700;
+      border: none;
+      box-shadow: 0 8px 20px rgba(106,167,255,0.18);
+    }
+
+    .wrap{max-width:1150px;margin:18px auto;padding:0 16px;display:flex;gap:18px;align-items:stretch}
+    .sidebar{width:300px;display:flex;flex-direction:column;gap:14px}
+
+    /* Updated panel styles */
+    .panel{
+      background:var(--panel-bg);
+      border-radius:12px;
+      padding:12px;
+      box-shadow:var(--panel-shadow);
+      border:var(--panel-border);
+    }
+    .panel h3{margin:0 0 8px 0;color:var(--text-2)}
+    .list{max-height:340px;overflow:auto;padding-right:6px}
+    .list ul{list-style:none;margin:0;padding:0}
+    .list li{
+      padding:10px;
+      border-radius:10px;
+      background: linear-gradient(180deg, #fdfeff, #f9fcff);
+      margin-bottom:8px;
+      border:1px solid rgba(12,60,110,0.03);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      transition: all 0.2s ease;
+    }
+    /* Added hover animation from digital_student_card */
+    .list li:hover{
+      background:linear-gradient(180deg,#f3fbff,#eef9ff);
+      transform:translateY(-3px);
+      box-shadow:0 10px 24px rgba(20,70,120,0.06);
+      cursor:pointer;
+    }
+
+    /* chat area */
+    .chat{flex:1;display:flex;flex-direction:column;gap:12px;min-height:520px}
+    /* Updated chat header to use new primary gradient */
+    .chat-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px;
+      border-radius:12px;
+      background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      color:white;
+      box-shadow: 0 12px 30px rgba(106,167,255,0.18);
+    }
+    /* Updated message area background and shadow */
+    .messages{
+      flex:1;
+      background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(235,249,255,0.95));
+      padding:18px;
+      border-radius:12px;
+      overflow:auto;
+      box-shadow: 0 10px 30px rgba(20,60,110,0.06);
+      border: 1px solid rgba(120,200,255,0.18);
+    }
+    .message{max-width:72%;padding:10px 12px;border-radius:12px;margin-bottom:12px;line-height:1.4;box-shadow: 0 6px 16px rgba(20,70,120,0.04)}
+    .message.alumni{background:linear-gradient(180deg,#e8f3ff,#dff0ff);align-self:flex-start;color:var(--text-1)}
+    .message.student{background:linear-gradient(180deg,#ffffff,#f1f8ff);align-self:flex-end;color:var(--text-1)}
+    .chat-input{display:flex;gap:10px;padding:12px;border-radius:12px;background:transparent;align-items:center}
+    .chat-input input{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(30,70,120,0.08);outline:none;background:#fff}
+    /* Updated send button to use primary style */
+    .chat-input button{
+        padding:10px 14px;
+        border-radius:10px;
+        border:none;
+        background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+        color:white;
+        cursor:pointer;
+        font-weight:700;
+        box-shadow: 0 8px 20px rgba(106,167,255,0.18);
+        transition: all 0.2s ease;
+    }
+    .chat-input button:hover{
+        box-shadow: 0 4px 12px rgba(10,30,60,0.08);
+        transform: translateY(-2px);
+    }
+
+    /* scrollbar style */
+    /* Updated scrollbar colors to match new theme */
+    .list::-webkit-scrollbar, .messages::-webkit-scrollbar{width:8px}
+    .list::-webkit-scrollbar-thumb, .messages::-webkit-scrollbar-thumb{background:linear-gradient(180deg, var(--accent-2), var(--accent-1));border-radius:6px}
+
+    @media (max-width:980px){
+      .wrap{flex-direction:column}
+      .sidebar{width:100%}
+      header h1 { font-size: 16px; position: static; transform: none; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div style="display:flex;gap:12px;align-items:center">
+    <div style="width:auto;height:48px;padding:0 10px;border-radius:10px;background:linear-gradient(120deg,#ffffff,#eef7ff);display:flex;align-items:center;justify-content:center;color:var(--text-1);font-weight:700;border:1px solid rgba(10,30,60,0.05);font-size:12px;text-align:center;">ALUMNI NEXUS</div>
+  </div>
+  <h1>Fintech Innovators</h1>
+  <div class="controls">
+    <button class="btn" onclick="location.href='index.html'">← Back to Portal</button>
+    <button class="btn primary" onclick="openRules()">⚙ Rules</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <aside class="sidebar">
+    <div class="panel">
+      <h3>Alumni</h3>
+      <div class="list" id="alumniList">
+        <ul>
+          <li>Rohit Sharma <span style="font-size:12px;color:var(--muted)">• 2012</span></li>
+          <li>Priya Singh <span style="font-size:12px;color:var(--muted)">• 2013</span></li>
+          <li>Arjun Mehta <span style="font-size:12px;color:var(--muted)">• 2011</span></li>
+          <li>Neha Kapoor <span style="font-size:12px;color:var(--muted)">• 2014</span></li>
+          <li>Vikram Desai <span style="font-size:12px;color:var(--muted)">• 2010</span></li>
+          <li>Aditi Rao <span style="font-size:12px;color:var(--muted)">• 2015</span></li>
+          <li>Siddharth Menon <span style="font-size:12px;color:var(--muted)">• 2016</span></li>
+          <li>Kavya Patel <span style="font-size:12px;color:var(--muted)">• 2017</span></li>
+          <li>Ananya Nair <span style="font-size:12px;color:var(--muted)">• 2018</span></li>
+          <li>Karan Malhotra <span style="font-size:12px;color:var(--muted)">• 2012</span></li>
+          <li>Simran Kaur <span style="font-size:12px;color:var(--muted)">• 2013</span></li>
+          <li>Ashish Bansal <span style="font-size:12px;color:var(--muted)">• 2011</span></li>
+          <li>Divya Verma <span style="font-size:12px;color:var(--muted)">• 2014</span></li>
+          <li>Nitin Bhalla <span style="font-size:12px;color:var(--muted)">• 2009</span></li>
+          <li>Sana Iqbal <span style="font-size:12px;color:var(--muted)">• 2010</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Students</h3>
+      <div class="list" id="studentList">
+        <ul>
+          <li>Aryan Gupta <span style="font-size:12px;color:var(--muted)">• 3rd yr</span></li>
+          <li>Isha Sharma <span style="font-size:12px;color:var(--muted)">• 2nd yr</span></li>
+          <li>Rajat Arora <span style="font-size:12px;color:var(--muted)">• 3rd yr</span></li>
+          <li>Mehul Joshi <span style="font-size:12px;color:var(--muted)">• 1st yr</span></li>
+          <li>Tanvi Chawla <span style="font-size:12px;color:var(--muted)">• 2nd yr</span></li>
+          <li>Aditya Jain <span style="font-size:12px;color:var(--muted)">• 3rd yr</span></li>
+          <li>Riya Kapoor <span style="font-size:12px;color:var(--muted)">• 2nd yr</span></li>
+          <li>Harsh Tiwari <span style="font-size:12px;color:var(--muted)">• 1st yr</span></li>
+          <li>Sanya Malhotra <span style="font-size:12px;color:var(--muted)">• 2nd yr</span></li>
+          <li>Vivek Kumar <span style="font-size:12px;color:var(--muted)">• 3rd yr</span></li>
+          <li>Kritika Sharma <span style="font-size:12px;color:var(--muted)">• 1st yr</span></li>
+          <li>Manish Pandey <span style="font-size:12px;color:var(--muted)">• 2nd yr</span></li>
+          <li>Pooja Reddy <span style="font-size:12px;color:var(--muted)">• 3rd yr</span></li>
+          <li>Rohit Verma <span style="font-size:12px;color:var(--muted)">• 2nd yr</span></li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <section class="chat">
+    <div class="chat-header">
+      <div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.9)">Group • Fintech Innovators</div>
+        <div style="font-weight:700;font-size:16px">Cohort Chat</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn" onclick="openRules()">Manage Rules</button>
+        <button class="btn" onclick="alert('Members')">Members</button>
+      </div>
+    </div>
+
+    <div class="messages panel" id="chatMessages">
+      <div class="message alumni"><strong>Rohit Sharma</strong><div style="font-size:13px;margin-top:6px">Welcome everyone — we will schedule a kickoff call next week.</div></div>
+      <div class="message student"><strong>Aryan Gupta</strong><div style="font-size:13px;margin-top:6px">Sounds good — available Tue/Wed evenings.</div></div>
+      <div class="message alumni"><strong>Priya Singh</strong><div style="font-size:13px;margin-top:6px">I'll share a draft agenda by tomorrow.</div></div>
+    </div>
+
+    <div class="chat-input">
+      <input id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendMsg()" />
+      <button onclick="sendMsg()">Send</button>
+    </div>
+  </section>
+</div>
+
+<div id="rulesModal" style="display:none;position:fixed;inset:0;background:rgba(5,20,40,0.5);align-items:center;justify-content:center;z-index:60">
+  <div class="panel" style="max-width:520px;padding:18px;">
+    <h3 style="margin:0 0 8px 0;color:var(--text-2)">Cohort Chat Rules</h3>
+    <p style="color:var(--muted);margin-top:6px">Add or edit rules for this cohort chat — set moderation, link-sharing policy and member privileges.</p>
+    <textarea id="rulesText" rows="6" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(30,70,120,0.06);margin-top:12px;background:#fdfeff;color:var(--text-1);">Be respectful. No spam. Use channel for fintech-related discussions only.</textarea>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+      <button class="btn" onclick="closeRules()">Cancel</button>
+      <button class="btn primary" onclick="saveRules()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function sendMsg(){
+    const input = document.getElementById('chatInput');
+    const txt = input.value.trim();
+    if(!txt) return;
+    const container = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'message student';
+    div.innerHTML = `<strong>You</strong><div style="font-size:13px;margin-top:6px">${escapeHtml(txt)}</div>`;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+    input.value = '';
+  }
+
+  function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  function openRules(){ document.getElementById('rulesModal').style.display='flex' }
+  function closeRules(){ document.getElementById('rulesModal').style.display='none' }
+  function saveRules(){ alert('Rules saved (placeholder)'); closeRules() }
+</script>
+
+</body>
+</html>

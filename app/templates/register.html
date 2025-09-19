@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status Based Registration - Alumni Nexus</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(180deg, #fafdff, #e3f4fb, #cfeafb); min-height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; padding: 20px 0; }
+    .container { background: rgba(255, 255, 255, 0.92); padding: 35px; border-radius: 18px; width: 480px; text-align: center; box-shadow: 0px 15px 35px rgba(0,0,0,0.15); }
+    .logo { display: flex; align-items: center; justify-content: center; margin-bottom: 15px; }
+    .logo-icon { width: 45px; height: 45px; background: linear-gradient(135deg, #1e90ff, #0066ff); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; font-weight: bold; box-shadow: 0px 4px 12px rgba(0,0,0,0.2); }
+    .logo-text { margin-left: 10px; font-size: 22px; font-weight: bold; color: #1e3a6f; letter-spacing: 1px; }
+    h2 { margin-bottom: 20px; color: #2c3e50; font-size: 26px; font-weight: bold; }
+    input, select { width: 90%; padding: 12px; margin: 8px 0; border: 1px solid #d0e3f0; border-radius: 12px; font-size: 15px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); transition: 0.3s; }
+    input:focus, select:focus { border-color: #66a6ff; box-shadow: 0px 0px 8px rgba(102,166,255,0.5); outline: none; }
+    button { width: 100%; padding: 12px; background: linear-gradient(135deg, #1e90ff, #0066ff); color: #fff; border: none; border-radius: 12px; cursor: pointer; font-size: 16px; font-weight: bold; transition: transform 0.2s ease, box-shadow 0.2s ease; margin-top: 15px; }
+    button:hover { transform: translateY(-3px); box-shadow: 0px 8px 20px rgba(0,0,0,0.2); }
+    .hidden { display: none; }
+    .switch { margin-top: 15px; font-size: 14px; color: #555; }
+    .switch a { color: #1e90ff; font-weight: bold; text-decoration: none; }
+    
+    /* Flash message styles */
+    .flash-messages { margin-bottom: 20px; }
+    .flash { padding: 12px; margin: 5px 0; border-radius: 8px; }
+    .flash.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .flash.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    
+    /* Password validation styles */
+    .password-requirements { text-align: left; font-size: 12px; color: #666; margin-top: 5px; }
+    .password-requirements ul { margin: 5px 0; padding-left: 20px; }
+    .password-requirements li { margin: 2px 0; }
+    .requirement-met { color: #28a745; }
+    .requirement-not-met { color: #dc3545; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="logo">
+      <div class="logo-icon">AN</div>
+      <div class="logo-text">Alumni Nexus</div>
+    </div>
+    <h2>Registration</h2>
+
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form id="main-form" method="POST" action="{{ url_for('register') }}" enctype="multipart/form-data">
+        <input type="text" id="name" name="name" placeholder="Full Name" required><br>
+        <input type="text" id="college" name="college" placeholder="College Name" required><br>
+        <select id="status" name="status" onchange="showForm()" required>
+            <option value="">--Select Status--</option>
+            <option value="student">Student</option>
+            <option value="college">College (Admin)</option>
+            <option value="alumni">Alumni</option>
+        </select>
+
+        <!-- Common password field -->
+        <input type="password" id="password" name="password" placeholder="Password" required oninput="validatePassword()"><br>
+        <div id="password-requirements" class="password-requirements">
+            <ul>
+                <li id="length-req">At least 8 characters</li>
+                <li id="upper-req">One uppercase letter</li>
+                <li id="lower-req">One lowercase letter</li>
+                <li id="digit-req">One number</li>
+            </ul>
+        </div>
+
+        <div id="student-form" class="hidden">
+            <input type="text" name="student_id" placeholder="Student ID"><br>
+            <input type="email" name="student_email" placeholder="Email Verification"><br>
+            <select name="student_department">
+                <option value="">--Select Department--</option>
+                <option value="CSE">Computer Science</option>
+                <option value="ECE">Electronics</option>
+                <option value="ME">Mechanical Engineering</option>
+                <option value="CE">Civil Engineering</option>
+            </select><br>
+            <select id="student-year" name="student_grad_year">
+                <option value="">--Select Year of Graduation--</option>
+            </select><br>
+            <select name="student_degree">
+                <option value="">--Select Degree / Program--</option>
+                <option value="BTech">B.Tech</option>
+                <option value="MTech">M.Tech</option>
+                <option value="BCA">BCA</option>
+                <option value="MCA">MCA</option>
+            </select><br>
+        </div>
+
+        <div id="college-form" class="hidden">
+            <input type="email" name="college_email" placeholder="Official Email Verification"><br>
+            <input type="text" name="admin_code" placeholder="Admin Code"><br>
+            <input type="text" name="admin_department" placeholder="Department/Section"><br>
+        </div>
+
+        <div id="alumni-form" class="hidden">
+            <input type="email" name="alumni_email" placeholder="Email Verification"><br>
+            <input type="file" name="id_card" accept="image/*,application/pdf"><br>
+            <small style="color: #666; font-size: 12px;">Upload ID Card (JPG, PNG, GIF, PDF - Max 16MB)</small><br>
+            <select name="alumni_department">
+                <option value="">--Select Department--</option>
+                <option value="CSE">Computer Science</option>
+                <option value="ECE">Electronics</option>
+                <option value="ME">Mechanical Engineering</option>
+                <option value="CE">Civil Engineering</option>
+            </select><br>
+            <select id="alumni-year" name="alumni_grad_year">
+                <option value="">--Select Year of Graduation--</option>
+            </select><br>
+            <select name="alumni_degree">
+                <option value="">--Select Degree / Program--</option>
+                <option value="BTech">B.Tech</option>
+                <option value="MTech">M.Tech</option>
+                <option value="BCA">BCA</option>
+                <option value="MCA">MCA</option>
+            </select><br>
+        </div>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <p class="switch">Already have an account? <a href="{{ url_for('home') }}">Login</a></p>
+  </div>
+
+  <script>
+    function showForm() {
+      const status = document.getElementById("status").value;
+      document.getElementById("student-form").classList.add("hidden");
+      document.getElementById("college-form").classList.add("hidden");
+      document.getElementById("alumni-form").classList.add("hidden");
+
+      if(status === "student") {
+        document.getElementById("student-form").classList.remove("hidden");
+      } else if(status === "college") {
+        document.getElementById("college-form").classList.remove("hidden");
+      } else if(status === "alumni") {
+        document.getElementById("alumni-form").classList.remove("hidden");
+      }
+    }
+    
+    function populateYears(selectId) {
+      const select = document.getElementById(selectId);
+      const currentYear = new Date().getFullYear();
+      for (let year = currentYear + 5; year >= 1980; year--) {
+        const option = document.createElement("option");
+        option.value = year;
+        option.textContent = year;
+        select.appendChild(option);
+      }
+    }
+    
+    function validatePassword() {
+      const password = document.getElementById("password").value;
+      
+      // Check length requirement
+      const lengthReq = document.getElementById("length-req");
+      if (password.length >= 8) {
+        lengthReq.classList.add("requirement-met");
+        lengthReq.classList.remove("requirement-not-met");
+      } else {
+        lengthReq.classList.add("requirement-not-met");
+        lengthReq.classList.remove("requirement-met");
+      }
+      
+      // Check uppercase requirement
+      const upperReq = document.getElementById("upper-req");
+      if (/[A-Z]/.test(password)) {
+        upperReq.classList.add("requirement-met");
+        upperReq.classList.remove("requirement-not-met");
+      } else {
+        upperReq.classList.add("requirement-not-met");
+        upperReq.classList.remove("requirement-met");
+      }
+      
+      // Check lowercase requirement
+      const lowerReq = document.getElementById("lower-req");
+      if (/[a-z]/.test(password)) {
+        lowerReq.classList.add("requirement-met");
+        lowerReq.classList.remove("requirement-not-met");
+      } else {
+        lowerReq.classList.add("requirement-not-met");
+        lowerReq.classList.remove("requirement-met");
+      }
+      
+      // Check digit requirement
+      const digitReq = document.getElementById("digit-req");
+      if (/\d/.test(password)) {
+        digitReq.classList.add("requirement-met");
+        digitReq.classList.remove("requirement-not-met");
+      } else {
+        digitReq.classList.add("requirement-not-met");
+        digitReq.classList.remove("requirement-met");
+      }
+    }
+    
+    // Initialize the page
+    populateYears("student-year");
+    populateYears("alumni-year");
+  </script>
+
+</body>
+</html>

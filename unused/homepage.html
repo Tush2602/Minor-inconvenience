@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Alumni Nexus — Centralized Alumni Platform</title>
+  <style>
+    :root{
+      --bg1: #f4fbff;
+      --bg2: #e8f3ff;
+      --accent-1: #0b66ff;
+      --accent-2: #00bfa6;
+      --muted: #64748b;
+      --card: #ffffff;
+      --radius: 14px;
+      font-family: 'Poppins', system-ui, sans-serif;
+    }
+    html,body{
+      height:100%;
+      margin:0;
+      background: linear-gradient(120deg,var(--accent-1),var(--accent-2),#6a11cb);
+      background-size: 300% 300%;
+      animation: gradientBG 12s ease infinite;
+      color:#0f1724;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:32px;
+    }
+    @keyframes gradientBG {
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+    .wrap{
+      width:100%;
+      max-width:1100px;
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:28px;
+      align-items:stretch;
+    }
+    .card{
+      background: rgba(255,255,255,0.9);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(10,20,40,0.15);
+      padding:28px;
+      position:relative;
+      backdrop-filter: blur(6px);
+    }
+    .hero { padding:20px 26px; }
+    .brand{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      margin-bottom:18px;
+    }
+    .logo-wrap{
+      width:80px;
+      height:80px;
+      flex-shrink:0;
+    }
+    .site-title{
+      font-size:22px;
+      font-weight:700;
+      letter-spacing:0.3px;
+    }
+    .site-sub{
+      font-size:13px;
+      color:var(--muted);
+      margin-top:4px;
+      font-weight:600;
+    }
+    h1{ font-size:28px; margin:6px 0 10px 0; line-height:1.12; }
+    p.lead{ color:var(--muted); margin:0 0 18px 0; font-size:15px; }
+    .features{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+      margin-top:12px;
+    }
+    .feature{
+      background: rgba(11,102,255,0.05);
+      border-radius:10px;
+      padding:10px 12px;
+      font-size:13px;
+      color:#08304a;
+    }
+    .cta-row{ margin-top:18px; display:flex; gap:12px; }
+    .btn{
+      padding:12px 16px;
+      border-radius:10px;
+      font-weight:700;
+      cursor:pointer;
+      border:0;
+      background: linear-gradient(90deg,var(--accent-1), var(--accent-2));
+      color:white;
+      box-shadow: 0 6px 18px rgba(11,102,255,0.2);
+    }
+    .btn.alt{ background:transparent; color:var(--accent-1); border:1px solid rgba(11,102,255,0.25); }
+    .auth{ display:flex; flex-direction:column; gap:14px; }
+    .auth h3{ margin:0; font-size:20px; }
+    .form{ display:flex; flex-direction:column; gap:10px; }
+    input{ padding:12px; border-radius:10px; border:1px solid #e6eef8; font-size:14px; }
+    input:focus{ border-color: var(--accent-1); outline:none; box-shadow:0 0 8px rgba(11,102,255,0.25); }
+    .small{ font-size:13px; color:var(--muted); }
+    .socials{ display:flex; gap:10px; }
+    .social-btn{
+      width:44px; height:44px; display:flex; align-items:center; justify-content:center;
+      border-radius:8px; background:#fff; border:1px solid #e6eef8; cursor:pointer;
+    }
+    /* Animated logo stroke */
+    .glow-circle {
+      stroke-dasharray: 314;
+      stroke-dashoffset: 314;
+      animation: dash 6s linear infinite;
+    }
+    @keyframes dash { to{stroke-dashoffset:0;} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- Left / Hero -->
+    <section class="card hero">
+      <div class="brand">
+        <!-- Creative circular animated logo -->
+        <div class="logo-wrap">
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#0b66ff"/>
+                <stop offset="50%" stop-color="#6a11cb"/>
+                <stop offset="100%" stop-color="#00bfa6"/>
+              </linearGradient>
+            </defs>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="url(#grad)" stroke-width="4" class="glow-circle"/>
+            <circle cx="60" cy="25" r="6" fill="url(#grad)"/>
+            <circle cx="95" cy="60" r="6" fill="url(#grad)"/>
+            <circle cx="60" cy="95" r="6" fill="url(#grad)"/>
+            <circle cx="25" cy="60" r="6" fill="url(#grad)"/>
+            <circle cx="60" cy="60" r="16" fill="url(#grad)" />
+          </svg>
+        </div>
+        <div>
+          <div class="site-title">Alumni Nexus</div>
+          <div class="site-sub">Centralized Alumni Data Management & Engagement</div>
+        </div>
+      </div>
+
+      <h1>Bring your alumni network together</h1>
+      <p class="lead">A single platform to connect graduates, institutions, and opportunities.</p>
+      <div class="features">
+        <div class="feature">Unified Alumni Profiles</div>
+        <div class="feature">Event & Mentorship</div>
+        <div class="feature">Secure Access</div>
+        <div class="feature">Smart Analytics</div>
+      </div>
+      <!-- <div class="cta-row">
+        <button class="btn">Get Prototype</button>
+        <button class="btn alt">Learn More</button>
+      </div> -->
+    </section>
+
+    <!-- Right / Login -->
+    <aside class="card auth" a>
+      <h3>Member Login</h3>
+      <aside class="card auth">
+  <h3>Member Login</h3>
+  <form class="form" action="index.html">
+
+    <!-- Status Buttons Section -->
+    <div>
+      <h4>Status</h4>
+      <div class="cta-row">
+        <a href="login.html"><button type="button" class="btn">Student</button></a>
+        <a href="logincol.html"><button type="button" class="btn">College</button></a>
+        <a href="loginalu.html"><button type="button" class="btn">Alumni</button></a>
+      </div>
+    </div>
+
+    <!-- Username & Password -->
+    <!-- <input type="text" placeholder="Username or Email" required>
+    <input type="password" placeholder="Password" required>
+    <button class="btn" type="submit">Login</button> -->
+  </form>
+
+  <div class="small">Don’t have an account? <a href="register2.html">Register</a></div>
+  <div class="socials">
+    <button class="social-btn">G</button>
+    <button class="social-btn">ln</button>
+  </div>
+</aside>
+
+      <!-- <form class="form" action="index.html">
+        <input type="text" placeholder="Username or Email" required>
+        <input type="password" placeholder="Password" required>
+        <button class="btn" type="submit">Login</button>
+      </form> -->
+      <!-- <div class="small">Don’t have an account? <a href="register2.html">Register</a></div>
+      <div class="socials">
+        <button class="social-btn">G</button>
+        <button class="social-btn">ln</button>
+      </div> -->
+    </aside>
+  </div>
+</body>
+</html>
