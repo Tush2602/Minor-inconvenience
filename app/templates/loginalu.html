@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #dff6ff, #b8e0f5);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      perspective: 1200px;
+      margin: 0;
+    }
+    .container {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 16px;
+      width: 420px;
+      text-align: center;
+      box-shadow: 0px 15px 35px rgba(0,0,0,0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transform-style: preserve-3d;
+      transform: rotateY(0deg) rotateX(0deg);
+      transition: transform 0.6s ease, box-shadow 0.3s ease;
+      animation: float 4s ease-in-out infinite;
+    }
+    .container:hover {
+      transform: rotateY(8deg) rotateX(4deg);
+      box-shadow: 0px 25px 50px rgba(0,0,0,0.25);
+    }
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+    h2 { 
+      margin-bottom: 20px; 
+      color: #2c3e50;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    input {
+      width: 90%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #d0e3f0;
+      border-radius: 10px;
+      font-size: 14px;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+      transition: 0.3s;
+    }
+    input:focus {
+      border-color: #66a6ff;
+      box-shadow: 0px 0px 8px rgba(102,166,255,0.5);
+      outline: none;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #1e90ff, #0066ff);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    button:hover { 
+      transform: translateY(-3px);
+      box-shadow: 0px 8px 20px rgba(0,0,0,0.2);
+    }
+    .switch {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #555;
+    }
+    .switch a { 
+      color: #1e90ff; 
+      font-weight: bold; 
+      text-decoration: none; 
+    }
+    .social-login {
+      margin: 20px 0;
+    }
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      margin: 0 10px;
+      border-radius: 50%;
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    }
+    .social-btn:hover {
+      transform: scale(1.15) rotateZ(5deg);
+      box-shadow: 0px 8px 20px rgba(0,0,0,0.2);
+    }
+    .social-btn img {
+      width: 24px;
+      height: 24px;
+    }
+
+        /* Flash messages container */
+/* Flash messages styling */
+    .flash-messages {
+      grid-column: 1 / -1; /* Spans both columns of .wrap */
+      max-width: 1100px;
+      margin: 0.5rem 0; /* Compact margin */
+      font-family: 'Poppins', system-ui, sans-serif;
+      color: #0f1724;
+    }
+
+    /* Base styling for individual flash messages */
+    .flash {
+      padding: 10px 12px; /* Matches .feature padding */
+      margin-bottom: 10px; /* Compact spacing */
+      border-radius: var(--radius); /* Uses page's --radius (14px) */
+      background: rgba(255, 255, 255, 0.95); /* Slightly more opaque for professionalism */
+      backdrop-filter: blur(6px); /* Matches .card blur */
+      box-shadow: 0 8px 24px rgba(10, 20, 40, 0.1); /* Softer shadow */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      font-size: 13px; /* Matches .feature and .small */
+      font-weight: 500; /* Professional weight */
+      animation: slideIn 0.5s ease-out;
+      transition: all 0.3s ease;
+    }
+
+    /* Animation for flash messages */
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px); /* Subtler animation */
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Hover effect */
+    .flash:hover {
+      transform: translateY(-2px); /* Matches .btn hover */
+      box-shadow: 0 10px 30px rgba(10, 20, 40, 0.15); /* Matches .card shadow */
+    }
+
+    /* Category-specific styling */
+    .flash.success {
+      background: rgba(0, 191, 166, 0.1); /* Subtle --accent-2 tint */
+      color: #0f1724; /* Matches page text */
+      border-left: 4px solid var(--accent-2); /* Professional border */
+    }
+
+    .flash.error {
+      background: rgba(220, 53, 69, 0.1); /* Subtle red tint */
+      color: #0f1724;
+      border-left: 4px solid #dc3545;
+    }
+
+    .flash.info {
+      background: rgba(11, 102, 255, 0.1); /* Subtle --accent-1 tint */
+      color: #0f1724;
+      border-left: 4px solid var(--accent-1);
+    }
+
+    .flash.warning {
+      background: rgba(255, 193, 7, 0.1); /* Subtle yellow tint */
+      color: #0f1724;
+      border-left: 4px solid #ffc107;
+    }
+
+    /* Close button */
+    .flash::after {
+      content: '×';
+      font-size: 1rem; /* Smaller for professionalism */
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--muted);
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+      padding: 0 8px; /* Ensure clickable area */
+    }
+
+    .flash:hover::after {
+      opacity: 1;
+    }
+
+    /* Responsive design */
+    @media (max-width: 600px) {
+      .flash-messages {
+        margin: 0.5rem 1rem;
+      }
+      .flash {
+        padding: 8px 10px;
+        font-size: 12px; /* Smaller for mobile */
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Login</h2>
+      <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-messages">
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+    <form action="{{ url_for('login_student') }}" method="POST">
+      <input type="email" name="email" placeholder="Email" required><br>
+      <input type="password" name="password" placeholder="Password" required><br>
+      <button type="submit">Login</button>
+    </form>
+
+    <!-- Social Login Options -->
+ <div class="social-login">
+      <p>Or Login With</p>
+       <a href="https://accounts.google.com/o/oauth2/v2/auth?
+    client_id=YOUR_GOOGLE_CLIENT_ID
+    &redirect_uri=YOUR_REDIRECT_URI
+    &response_type=code
+    &scope=email%20profile">
+    <button class="social-btn">
+      <img src="https://cdn-icons-png.flaticon.com/512/300/300221.png" alt="Google">
+    </button>
+  </a>
+
+      <!-- <button class="social-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/300/300221.png" alt="Google">
+      </button> -->
+      <a href="https://www.linkedin.com/oauth/v2/authorization?
+    response_type=code
+    &client_id=YOUR_LINKEDIN_CLIENT_ID
+    &redirect_uri=YOUR_REDIRECT_URI
+    &scope=r_liteprofile%20r_emailaddress">
+    <button class="social-btn">
+      <img src="https://cdn-icons-png.flaticon.com/512/145/145807.png" alt="LinkedIn">
+    </button>
+  </a>
+      <!-- <button class="social-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/145/145807.png" alt="LinkedIn">
+      </button> -->
+      <a href="https://github.com/login/oauth/authorize?
+    client_id=YOUR_GITHUB_CLIENT_ID
+    &redirect_uri=YOUR_REDIRECT_URI
+    &scope=user">
+    <button class="social-btn">
+      <img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" alt="GitHub">
+    </button>
+  </a>
+      <!-- <button class="social-btn">
+        <img src="https://cdn-icons-png.flaticon.com/512/733/733553.png" alt="GitHub">
+      </button> -->
+    </div>
+
+    <p class="switch">Don’t have an account? <a href="{{ url_for('register') }}">Register</a></p>
+  </div>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.flash').forEach(flash => {
+    flash.addEventListener('click', (e) => {
+      if (e.target === flash || e.target.matches('.flash::after')) {
+        flash.style.opacity = '0';
+        setTimeout(() => flash.remove(), 300);
+      }
+    });
+  });
+});
+  </script>
+
+</body>
+</html>

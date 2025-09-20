@@ -1,52 +1,330 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alumni Nexus - Homepage</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Alumni Nexus — Centralized Alumni Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(180deg, #fafdff, #e3f4fb, #cfeafb); min-height: 100vh; display: flex; justify-content: center; align-items: center; margin: 0; }
-    .container { background: rgba(255, 255, 255, 0.92); padding: 35px; border-radius: 18px; width: 480px; text-align: center; box-shadow: 0px 15px 35px rgba(0,0,0,0.15); }
-    .logo { display: flex; align-items: center; justify-content: center; margin-bottom: 25px; }
-    .logo-icon { width: 60px; height: 60px; background: linear-gradient(135deg, #1e90ff, #0066ff); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 26px; font-weight: bold; box-shadow: 0px 4px 12px rgba(0,0,0,0.2); }
-    .logo-text { margin-left: 15px; font-size: 28px; font-weight: bold; color: #1e3a6f; letter-spacing: 1px; }
-    h1 { color: #2c3e50; font-size: 32px; margin-bottom: 20px; }
-    p { color: #555; font-size: 16px; line-height: 1.6; margin-bottom: 25px; }
-    .btn { display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #1e90ff, #0066ff); color: #fff; text-decoration: none; border-radius: 12px; font-weight: bold; transition: transform 0.2s ease, box-shadow 0.2s ease; margin: 10px; }
-    .btn:hover { transform: translateY(-3px); box-shadow: 0px 8px 20px rgba(0,0,0,0.2); }
-    
-    /* Flash message styles */
-    .flash-messages { margin-bottom: 20px; }
-    .flash { padding: 12px; margin: 5px 0; border-radius: 8px; }
-    .flash.success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-    .flash.error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+    :root{
+      --bg1: #f4fbff;
+      --bg2: #e8f3ff;
+      --accent-1: #0b66ff;
+      --accent-2: #00bfa6;
+      --muted: #64748b;
+      --card: #ffffff;
+      --radius: 14px;
+      font-family: 'Poppins', system-ui, sans-serif;
+    }
+    html,body{
+      height:100%;
+      margin:0;
+      background: linear-gradient(120deg,var(--accent-1),var(--accent-2),#6a11cb);
+      background-size: 300% 300%;
+      animation: gradientBG 12s ease infinite;
+      color:#0f1724;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:32px;
+    }
+    @keyframes gradientBG {
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+    .wrap{
+      width:100%;
+      max-width:1100px;
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:28px;
+      align-items:stretch;
+    }
+    .card{
+      background: rgba(255,255,255,0.9);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(10,20,40,0.15);
+      padding:28px;
+      position:relative;
+      backdrop-filter: blur(6px);
+    }
+    .hero { padding:20px 26px; }
+    .brand{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      margin-bottom:18px;
+    }
+    .logo-wrap{
+      width:80px;
+      height:80px;
+      flex-shrink:0;
+    }
+    .site-title{
+      font-size:22px;
+      font-weight:700;
+      letter-spacing:0.3px;
+    }
+    .site-sub{
+      font-size:13px;
+      color:var(--muted);
+      margin-top:4px;
+      font-weight:600;
+    }
+    h1{ font-size:28px; margin:6px 0 10px 0; line-height:1.12; }
+    p.lead{ color:var(--muted); margin:0 0 18px 0; font-size:15px; }
+    .features{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+      margin-top:12px;
+    }
+    .feature{
+      background: rgba(11,102,255,0.05);
+      border-radius:10px;
+      padding:10px 12px;
+      font-size:13px;
+      color:#08304a;
+    }
+    .cta-row{ margin-top:18px; display:flex; gap:12px; }
+    .btn{
+      padding:12px 16px;
+      border-radius:10px;
+      font-weight:700;
+      cursor:pointer;
+      border:0;
+      background: linear-gradient(90deg,var(--accent-1), var(--accent-2));
+      color:white;
+      box-shadow: 0 6px 18px rgba(11,102,255,0.2);
+    }
+    .btn.alt{ background:transparent; color:var(--accent-1); border:1px solid rgba(11,102,255,0.25); }
+    .auth{ display:flex; flex-direction:column; gap:14px; }
+    .auth h3{ margin:0; font-size:20px; }
+    .form{ display:flex; flex-direction:column; gap:10px; }
+    input{ padding:12px; border-radius:10px; border:1px solid #e6eef8; font-size:14px; }
+    input:focus{ border-color: var(--accent-1); outline:none; box-shadow:0 0 8px rgba(11,102,255,0.25); }
+    .small{ font-size:13px; color:var(--muted); }
+    .socials{ display:flex; gap:10px; }
+    .social-btn{
+      width:44px; height:44px; display:flex; align-items:center; justify-content:center;
+      border-radius:8px; background:#fff; border:1px solid #e6eef8; cursor:pointer;
+    }
+    /* Animated logo stroke */
+    .glow-circle {
+      stroke-dasharray: 314;
+      stroke-dashoffset: 314;
+      animation: dash 6s linear infinite;
+    }
+    @keyframes dash { to{stroke-dashoffset:0;} }
+
+    /* Flash messages container */
+/* Flash messages styling */
+.flash-messages {
+  grid-column: 1 / -1; /* Spans both columns of .wrap */
+  max-width: 1100px;
+  margin: 0.5rem 0; /* Compact margin */
+  font-family: 'Poppins', system-ui, sans-serif;
+  color: #0f1724;
+}
+
+/* Base styling for individual flash messages */
+.flash {
+  padding: 10px 12px; /* Matches .feature padding */
+  margin-bottom: 10px; /* Compact spacing */
+  border-radius: var(--radius); /* Uses page's --radius (14px) */
+  background: rgba(255, 255, 255, 0.95); /* Slightly more opaque for professionalism */
+  backdrop-filter: blur(6px); /* Matches .card blur */
+  box-shadow: 0 8px 24px rgba(10, 20, 40, 0.1); /* Softer shadow */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  font-size: 13px; /* Matches .feature and .small */
+  font-weight: 500; /* Professional weight */
+  animation: slideIn 0.5s ease-out;
+  transition: all 0.3s ease;
+}
+
+/* Animation for flash messages */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px); /* Subtler animation */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Hover effect */
+.flash:hover {
+  transform: translateY(-2px); /* Matches .btn hover */
+  box-shadow: 0 10px 30px rgba(10, 20, 40, 0.15); /* Matches .card shadow */
+}
+
+/* Category-specific styling */
+.flash.success {
+  background: rgba(0, 191, 166, 0.1); /* Subtle --accent-2 tint */
+  color: #0f1724; /* Matches page text */
+  border-left: 4px solid var(--accent-2); /* Professional border */
+}
+
+.flash.error {
+  background: rgba(220, 53, 69, 0.1); /* Subtle red tint */
+  color: #0f1724;
+  border-left: 4px solid #dc3545;
+}
+
+.flash.info {
+  background: rgba(11, 102, 255, 0.1); /* Subtle --accent-1 tint */
+  color: #0f1724;
+  border-left: 4px solid var(--accent-1);
+}
+
+.flash.warning {
+  background: rgba(255, 193, 7, 0.1); /* Subtle yellow tint */
+  color: #0f1724;
+  border-left: 4px solid #ffc107;
+}
+
+/* Close button */
+.flash::after {
+  content: '×';
+  font-size: 1rem; /* Smaller for professionalism */
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--muted);
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+  padding: 0 8px; /* Ensure clickable area */
+}
+
+.flash:hover::after {
+  opacity: 1;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .flash-messages {
+    margin: 0.5rem 1rem;
+  }
+  .flash {
+    padding: 8px 10px;
+    font-size: 12px; /* Smaller for mobile */
+  }
+}
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="logo">
-      <div class="logo-icon">AN</div>
-      <div class="logo-text">Alumni Nexus</div>
-    </div>
-    
-    <!-- Flash messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="flash-messages">
-          {% for category, message in messages %}
-            <div class="flash {{ category }}">{{ message }}</div>
-          {% endfor %}
+  <div class="wrap">
+    <!-- Left / Hero -->
+    <section class="card hero">
+      <div class="brand">
+        <!-- Creative circular animated logo -->
+        <div class="logo-wrap">
+          <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#0b66ff"/>
+                <stop offset="50%" stop-color="#6a11cb"/>
+                <stop offset="100%" stop-color="#00bfa6"/>
+              </linearGradient>
+            </defs>
+            <circle cx="60" cy="60" r="50" fill="none" stroke="url(#grad)" stroke-width="4" class="glow-circle"/>
+            <circle cx="60" cy="25" r="6" fill="url(#grad)"/>
+            <circle cx="95" cy="60" r="6" fill="url(#grad)"/>
+            <circle cx="60" cy="95" r="6" fill="url(#grad)"/>
+            <circle cx="25" cy="60" r="6" fill="url(#grad)"/>
+            <circle cx="60" cy="60" r="16" fill="url(#grad)" />
+          </svg>
         </div>
-      {% endif %}
-    {% endwith %}
-    
-    <h1>Welcome to Alumni Nexus</h1>
-    <p>Connect with your college community. Join students, alumni, and administrators on one unified platform.</p>
-    
+        <div>
+          <div class="site-title">Alumni Nexus</div>
+          <div class="site-sub">Centralized Alumni Data Management & Engagement</div>
+        </div>
+      </div>
+
+      <h1>Bring your alumni network together</h1>
+      <p class="lead">A single platform to connect graduates, institutions, and opportunities.</p>
+      <div class="features">
+        <div class="feature">Unified Alumni Profiles</div>
+        <div class="feature">Event & Mentorship</div>
+        <div class="feature">Secure Access</div>
+        <div class="feature">Smart Analytics</div>
+      </div>
+      <!-- <div class="cta-row">
+        <button class="btn">Get Prototype</button>
+        <button class="btn alt">Learn More</button>
+      </div> -->
+    </section>
+
+    <!-- Right / Login -->
+    <aside class="card auth" a>
+          <!-- Right / Login/Register -->
+    <aside class="card auth">
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-messages">
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      <aside class="card auth">
+  <h3>Member Login</h3>
+  <form class="form" action="index.html">
+
+    <!-- Status Buttons Section -->
     <div>
-      <a href="{{ url_for('register') }}" class="btn">Register Now</a>
-      <a href="#" class="btn" style="background: linear-gradient(135deg, #28a745, #20c997);">Login</a>
+      <h4>Status</h4>
+      <div class="cta-row">
+        <a href={{ url_for('login_student') }}><button type="button" class="btn">Student</button></a>
+        <a href={{ url_for('login_college') }}><button type="button" class="btn">College</button></a>
+        <a href={{ url_for('login_alumni') }}><button type="button" class="btn">Alumni</button></a>
+      </div>
     </div>
+
+    <!-- Username & Password -->
+    <!-- <input type="text" placeholder="Username or Email" required>
+    <input type="password" placeholder="Password" required>
+    <button class="btn" type="submit">Login</button> -->
+  </form>
+
+  <div class="small">Don’t have an account? <a href={{ url_for('register') }}>Register</a></div>
+  <div class="socials">
+    <button class="social-btn">G</button>
+    <button class="social-btn">ln</button>
   </div>
+</aside>
+
+      <!-- <form class="form" action="index.html">
+        <input type="text" placeholder="Username or Email" required>
+        <input type="password" placeholder="Password" required>
+        <button class="btn" type="submit">Login</button>
+      </form> -->
+      <!-- <div class="small">Don’t have an account? <a href="register2.html">Register</a></div>
+      <div class="socials">
+        <button class="social-btn">G</button>
+        <button class="social-btn">ln</button>
+      </div> -->
+    </aside>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.flash').forEach(flash => {
+    flash.addEventListener('click', (e) => {
+      if (e.target === flash || e.target.matches('.flash::after')) {
+        flash.style.opacity = '0';
+        setTimeout(() => flash.remove(), 300);
+      }
+    });
+  });
+});
+  </script>
 </body>
 </html>

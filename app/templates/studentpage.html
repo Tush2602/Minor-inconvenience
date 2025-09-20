@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ALUMNI NEXUS - Student Portal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-1: #f6fbff;
+  --bg-2: #eef8ff;
+  --accent-1: #6aa7ff;
+  --accent-2: #83e3ff;
+  --heading: #0b3d66;
+  --muted: #6b7280;
+}
+body{
+  margin:0;
+  font-family:'Inter',sans-serif;
+  background:
+    radial-gradient(circle at 10% 8%, rgba(131,227,255,0.12), transparent 18%),
+    linear-gradient(180deg,var(--bg-1) 0%, var(--bg-2) 100%);
+  color:var(--heading);
+  -webkit-font-smoothing: antialiased;
+}
+/* === Top navigation === */
+header{
+  background:rgba(255,255,255,0.85);
+  backdrop-filter:blur(10px);
+  padding:12px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-bottom: 1px solid rgba(130,200,255,0.22);
+}
+header h1{margin:0;font-size:20px;}
+nav a{
+  margin-left:20px;
+  text-decoration:none;
+  color:var(--heading);
+  font-weight:600;
+  transition:color .2s;
+}
+nav a:hover{color:var(--accent-1);}
+.icon-btn{
+  cursor:pointer;font-size:24px;background:#fff;color:var(--heading);
+  border-radius:50%;width:40px;height:40px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 8px 20px rgba(100,160,220,0.1);
+  border:1px solid rgba(100,180,255,0.25);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.icon-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(100,160,220,0.15);
+}
+/* Hero */
+.hero{text-align:center;padding:60px 20px 30px;}
+.hero h2{margin:0;font-size:2.2rem;color:var(--heading);}
+.hero p{margin-top:10px;color:var(--muted);font-size:1.1rem;}
+/* Panels & layout */
+section{padding:50px 30px;max-width:1200px;margin:0 auto;}
+h2{text-align:center;font-size:2rem;margin-bottom:15px;}
+p.section-intro{text-align:center;color:var(--muted);max-width:700px;margin:0 auto 30px;}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:25px;
+  margin-top:20px;
+}
+#groupGrid, .legacy-stats {
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 900px) {
+  #groupGrid, .legacy-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  #groupGrid, .legacy-stats {
+    grid-template-columns: 1fr;
+  }
+}
+.card{
+  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(235,249,255,0.95));
+  box-shadow:
+    0 30px 60px rgba(30,90,140,0.08),
+    0 10px 30px rgba(30,90,140,0.06);
+  border: 1px solid rgba(130,200,255,0.22);
+  border-radius:18px;
+  padding:22px;
+  text-align:center;
+  transition: transform .28s ease, box-shadow .28s ease;
+}
+.card:hover{
+  transform: translateY(-8px);
+  box-shadow:
+    0 60px 100px rgba(30,90,140,0.10),
+    0 20px 50px rgba(30,90,140,0.08);
+}
+.action-btn, .tab-btn {
+  border:none;
+  background:var(--accent-1);
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
+  box-shadow: 0 4px 12px rgba(106, 167, 255, 0.25);
+}
+.action-btn:hover, .tab-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(106, 167, 255, 0.3);
+}
+.action-btn{ margin-top:12px; padding:10px 20px; border-radius: 10px; }
+.tab-btn{ padding:8px 18px; border-radius: 20px; }
+.action-btn.joined{background:var(--heading)!important;}
+.tab-btn.active{background:var(--heading);}
+
+.top-search{
+  display:flex;
+  justify-content:center;
+  padding:20px;
+}
+.top-search input{
+  padding:10px 16px;
+  border:1px solid rgba(130,200,255,0.22);
+  border-radius:10px;width:320px;
+  box-shadow: 0 10px 30px rgba(30,90,140,0.06);
+  transition: box-shadow .2s ease, border-color .2s ease;
+}
+.top-search input:focus {
+  outline: none;
+  border-color: var(--accent-1);
+  box-shadow: 0 10px 30px rgba(30,90,140,0.08), 0 0 0 3px rgba(106, 167, 255, 0.3);
+}
+.tabs{display:flex;justify-content:center;gap:20px;margin-top:20px;}
+.legacy-stats{
+  display:grid;
+  gap:20px;
+  margin-top:20px;
+}
+.legacy-stats .stat h3{margin:0;color:var(--accent-1);font-size:2rem;font-weight:700;}
+.legacy-stats .stat p{margin-top:5px;color:var(--muted);font-weight:600;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ALUMNI NEXUS</h1>
+  <nav>
+    <a href="#dashboard">Dashboard</a>
+    <a href="#groups">Groups</a>
+    <a href="#services">Services</a>
+    <a href="#mentorship">Mentorship</a>
+    <a href="#events">Events</a>
+    <a href="#nostalgia">Nostalgia</a>
+    <a href="#legacy">Legacy</a>
+    <a href="#findalumni">Find Alumni</a>
+  </nav>
+  <a href="{{ url_for('student_card', student_id=student_id) }}"><div id="studentIcon" class="icon-btn" title="Student Dashboard">👤</div></a>
+</header>
+
+<div class="hero">
+  <h2>Welcome to Alumni Nexus</h2>
+  <p>Your one-stop hub for events, mentorship, services and the alumni legacy tree.</p>
+</div>
+
+<div class="top-search">
+  <input type="text" id="searchBar" placeholder="Search alumni, services, events…">
+</div>
+
+<section id="dashboard">
+  <h2>Dashboard</h2>
+  <div class="grid">
+    <div class="card"><h3 id="alumniCount">0</h3><p>Connected Alumni</p></div>
+    <div class="card"><h3>5</h3><p>Upcoming Events</p></div>
+  </div>
+</section>
+
+<section id="groups">
+  <h2>Groups & Cohorts</h2>
+  <p class="section-intro">Connect with like-minded peers and alumni.</p>
+  <div class="grid" id="groupGrid"></div>
+</section>
+
+<section id="services">
+  <h2>Services & Skills</h2>
+  <p class="section-intro">Apply for programs and track progress.</p>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="approved">Approved</button>
+    <button class="tab-btn" data-tab="apply">New to Apply</button>
+    <button class="tab-btn" data-tab="applied">Applied (Under Process)</button>
+  </div>
+  <div class="grid" id="serviceGrid"></div>
+</section>
+
+<section id="mentorship">
+  <h2>Mentorship</h2>
+  <div class="grid" id="mentorGrid"></div>
+</section>
+
+<section id="events">
+  <h2>Events Hub</h2>
+  <div class="grid" id="eventGrid"></div>
+</section>
+
+<section id="nostalgia">
+  <h2>Nostalgia Mode 🎶📷</h2>
+  <p class="section-intro">Step back in time with curated memories.</p>
+  <div class="card"><button class="action-btn">Enter Nostalgia</button></div>
+</section>
+
+<section id="legacy">
+  <h2>Alumni Legacy Tree</h2>
+  <p class="section-intro">Visual snapshot of our alumni network.</p>
+  <div class="legacy-stats">
+    <div class="card stat"><h3>15,000+</h3><p>Total Alumni</p></div>
+    <div class="card stat"><h3>45,000+</h3><p>Global Connections</p></div>
+    <div class="card stat"><h3>500+</h3><p>Industry Leaders</p></div>
+    <div class="card stat"><h3>120+</h3><p>Countries</p></div>
+    <div class="card stat"><h3>75%</h3><p>Entrepreneurial Rate</p></div>
+    <div class="card stat"><h3>89%</h3><p>Career Growth</p></div>
+  </div>
+</section>
+
+<section id="findalumni">
+  <h2>Find Alumni Near Me</h2>
+  <p class="section-intro">Locate and connect with alumni in your vicinity.</p>
+  <div class="grid">
+    <div class="card">
+      <h3>Use My Location</h3>
+      <p>Click the button to detect nearby alumni.</p>
+      <button class="action-btn" onclick="detectLocation()">Detect Location</button>
+      <p id="locationResult" style="margin-top:10px;color:var(--muted);"></p>
+    </div>
+  </div>
+</section>
+
+<script>
+// Sample Data
+const alumni=[
+  {name:'Anita Singh',batch:'2015',field:'Machine Learning'},
+  {name:'Ramesh Patel',batch:'2012',field:'Product Management'},
+  {name:'Leena Dsouza',batch:'2010',field:'Cybersecurity'}
+];
+const events=[
+  {title:'Annual Alumni Meet',desc:'Reconnect with seniors'},
+  {title:'AI Tech Summit',desc:'Discuss AI breakthroughs'},
+  {title:'Sports Fest',desc:'Friendly competitions'}
+];
+const groups=[
+  'Fintech Innovators','Tech Entrepreneurs','Open Source Crew',
+  'Global Alumni Network','Women in Tech','Startup Mentors'
+];
+const services={
+  approved:[
+    {title:'Data Analytics Internship',desc:'Alumni Board approved'},
+    {title:'Cloud Pro Certificate',desc:'Industry validated'}
+  ],
+  apply:[
+    {title:'Startup Bootcamp',desc:'Entrepreneurship skills'},
+    {title:'UI/UX Workshop',desc:'Design mentoring'},
+    {title:'AI Research Lab',desc:'Cutting-edge research'}
+  ],
+  applied:[
+    {title:'Cloud Training',desc:'Azure & AWS basics – under review'},
+    {title:'Cybersecurity Intensive',desc:'Pending approval'}
+  ]
+};
+
+function render(){
+  document.getElementById('alumniCount').textContent=alumni.length;
+// Groups
+const gg = document.getElementById('groupGrid');
+groups.forEach(g => {
+  const d = document.createElement('div');
+  d.className = 'card';
+  d.innerHTML = `
+    <h3>${g}</h3>
+    <p>Join conversations & activities</p>
+    <button class="action-btn">View</button>
+  `;
+  // attach event after button is added
+  d.querySelector('button').addEventListener('click', () => {
+    window.location.href = "fintech2.html";
+  });
+  gg.appendChild(d);
+});
+
+// Events
+const eg = document.getElementById('eventGrid');
+events.forEach(ev => {
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.innerHTML = `
+    <h3>${ev.title}</h3>
+    <p>${ev.desc}</p>
+    <button class="action-btn">View</button>
+  `;
+  div.querySelector('button').addEventListener('click', () => {
+    window.location.href = "fintech2.html";
+  });
+  eg.appendChild(div);
+});
+
+// Mentors
+const mg = document.getElementById('mentorGrid');
+alumni.forEach(a => {
+  const d = document.createElement('div');
+  d.className = 'card';
+  d.innerHTML = `
+    <h3>${a.name}</h3>
+    <p>Batch ${a.batch}<br>${a.field}</p>
+    <button class="action-btn">Request Mentorship</button>
+  `;
+  d.querySelector('button').addEventListener('click', () => {
+    window.location.href = "fintech2.html";
+  });
+  mg.appendChild(d);
+});
+
+  loadServices('approved');
+}
+render();
+
+function loadServices(tab){
+  const sg=document.getElementById('serviceGrid');
+  sg.innerHTML='';
+  services[tab].forEach(s=>{
+    const d=document.createElement('div');
+    d.className='card';
+    d.innerHTML=`<h3>${s.title}</h3><p>${s.desc}</p><button class="action-btn">Apply</button>`;
+    sg.appendChild(d);
+  });
+}
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    loadServices(btn.dataset.tab);
+  };
+});
+
+document.addEventListener('click',e=>{
+  if(e.target.classList.contains('action-btn')){
+    e.target.textContent = e.target.classList.contains('joined') ? 'Joined' : e.target.textContent.replace('Request Mentorship','Request Mentorship').replace('Apply','Apply').replace('Enter Nostalgia','Enter Nostalgia') || 'Join';
+  }
+});
+
+// Simple geolocation placeholder
+function detectLocation(){
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(pos=>{
+      const {latitude,longitude}=pos.coords;
+      document.getElementById('locationResult').textContent=
+        `Your location detected: Lat ${latitude.toFixed(4)}, Lon ${longitude.toFixed(4)}. (Integrate with map API for nearby alumni.)`;
+    },()=>{document.getElementById('locationResult').textContent='Location access denied.';});
+  } else {
+    document.getElementById('locationResult').textContent='Geolocation not supported.';
+  }
+}
+</script>
+</body>
+</html>
