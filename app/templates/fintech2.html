@@ -1,0 +1,950 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fintech Innovators — Cohort</title>
+  <style>
+    :root{
+      --bg-1: #f6fbff;
+      --bg-2: #eef8ff;
+      --accent-1: #6aa7ff;
+      --accent-2: #83e3ff;
+      --muted: #6b7280;
+      --text-1: #0b3d66;
+      --text-2: #06284a;
+      --panel-bg: white;
+      --panel-shadow: 0 8px 26px rgba(10,28,60,0.04);
+      --panel-border: 1px solid rgba(10,28,60,0.03);
+    }
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: Inter, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at 10% 8%, rgba(131,227,255,0.10), transparent 18%),
+                  linear-gradient(180deg,var(--bg-1) 0%, var(--bg-2) 100%);
+      color: var(--text-1);
+      -webkit-font-smoothing:antialiased;
+    }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:18px 24px;
+      background:transparent;
+      position:sticky;
+      top:0;
+      z-index:20;
+      /* Change 1: Added relative positioning for centering the title */
+      position: relative;
+    }
+    /* Change 1: Centered the h1 title */
+    header h1{
+      margin:0;
+      font-size:20px;
+      color:var(--text-2);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      text-align: center;
+    }
+    header .controls{display:flex;gap:10px;align-items:center}
+
+    /* Updated button styles from digital_student_card */
+    .btn{
+      padding:8px 12px;
+      border-radius:10px;
+      font-weight:700;
+      cursor:pointer;
+      border: 1px solid rgba(10,30,60,0.06);
+      background: white;
+      color: var(--text-1);
+      transition: all 0.2s ease;
+    }
+    .btn:hover{
+        box-shadow: 0 4px 12px rgba(10,30,60,0.08);
+        transform: translateY(-2px);
+    }
+    .btn.primary{
+      background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      color:#fff;
+      font-weight:700;
+      border: none;
+      box-shadow: 0 8px 20px rgba(106,167,255,0.18);
+    }
+
+    .wrap{max-width:1150px;margin:18px auto;padding:0 16px;display:flex;gap:18px;align-items:stretch}
+    .sidebar{width:300px;display:flex;flex-direction:column;gap:14px}
+
+    /* Updated panel styles */
+    .panel{
+      background:var(--panel-bg);
+      border-radius:12px;
+      padding:12px;
+      box-shadow:var(--panel-shadow);
+      border:var(--panel-border);
+    }
+    .panel h3{margin:0 0 8px 0;color:var(--text-2)}
+    .list{max-height:340px;overflow:auto;padding-right:6px}
+    .list ul{list-style:none;margin:0;padding:0}
+    .list li{
+      padding:10px;
+      border-radius:10px;
+      background: linear-gradient(180deg, #fdfeff, #f9fcff);
+      margin-bottom:8px;
+      border:1px solid rgba(12,60,110,0.03);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      transition: all 0.2s ease;
+    }
+    /* Added hover animation from digital_student_card */
+    .list li:hover{
+      background:linear-gradient(180deg,#f3fbff,#eef9ff);
+      transform:translateY(-3px);
+      box-shadow:0 10px 24px rgba(20,70,120,0.06);
+      cursor:pointer;
+    }
+
+    /* chat area */
+    .chat{flex:1;display:flex;flex-direction:column;gap:12px;min-height:520px}
+    /* Updated chat header to use new primary gradient */
+    .chat-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px;
+      border-radius:12px;
+      background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      color:white;
+      box-shadow: 0 12px 30px rgba(106,167,255,0.18);
+    }
+    /* Updated message area background and shadow */
+    .messages{
+      flex:1;
+      background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(235,249,255,0.95));
+      padding:18px;
+      border-radius:12px;
+      overflow:auto;
+      box-shadow: 0 10px 30px rgba(20,60,110,0.06);
+      border: 1px solid rgba(120,200,255,0.18);
+    }
+    .message{max-width:72%;padding:10px 12px;border-radius:12px;margin-bottom:12px;line-height:1.4;box-shadow: 0 6px 16px rgba(20,70,120,0.04)}
+    .message.alumni{background:linear-gradient(180deg,#e8f3ff,#dff0ff);align-self:flex-start;color:var(--text-1)}
+    .message.student{background:linear-gradient(180deg,#ffffff,#f1f8ff);align-self:flex-end;color:var(--text-1)}
+    .chat-input{display:flex;gap:10px;padding:12px;border-radius:12px;background:transparent;align-items:center}
+    .chat-input input{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(30,70,120,0.08);outline:none;background:#fff}
+    /* Updated send button to use primary style */
+    .chat-input button{
+        padding:10px 14px;
+        border-radius:10px;
+        border:none;
+        background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+        color:white;
+        cursor:pointer;
+        font-weight:700;
+        box-shadow: 0 8px 20px rgba(106,167,255,0.18);
+        transition: all 0.2s ease;
+    }
+    .chat-input button:hover{
+        box-shadow: 0 4px 12px rgba(10,30,60,0.08);
+        transform: translateY(-2px);
+    }
+
+    /* scrollbar style */
+    /* Updated scrollbar colors to match new theme */
+    .list::-webkit-scrollbar, .messages::-webkit-scrollbar{width:8px}
+    .list::-webkit-scrollbar-thumb, .messages::-webkit-scrollbar-thumb{background:linear-gradient(180deg, var(--accent-2), var(--accent-1));border-radius:6px}
+
+    @media (max-width:980px){
+      .wrap{flex-direction:column}
+      .sidebar{width:100%}
+      header h1 { font-size: 16px; position: static; transform: none; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div style="display:flex;gap:12px;align-items:center">
+    <div style="width:auto;height:48px;padding:0 10px;border-radius:10px;background:linear-gradient(120deg,#ffffff,#eef7ff);display:flex;align-items:center;justify-content:center;color:var(--text-1);font-weight:700;border:1px solid rgba(10,30,60,0.05);font-size:12px;text-align:center;">ALUMNI NEXUS</div>
+  </div>
+  <h1>Fintech Innovators</h1>
+  <div class="controls">
+    <button class="btn" onclick="location.href='{{url_for('admin_dashboard')}}'">← Back to Portal</button>
+    <button class="btn primary" onclick="openRules()">⚙ Rules</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <aside class="sidebar">
+    <div class="panel">
+      <h3>Alumni</h3>
+      <div class="list" id="alumniList">
+        <ul>
+          <li>Rohit Sharma <span style="font-size:12px;color:var(--muted)">• 2012</span></li>
+          <li>Priya Singh <span style="font-size:12px;color:var(--muted)">• 2013</span></li>
+          <li>Arjun Mehta <span style="font-size:12px;color:var(--muted)">• 2011</span></li>
+          <li>Neha Kapoor <span style="font-size:12px;color:var(--muted)">• 2014</span></li>
+          <li>Vikram Desai <span style="font-size:12px;color:var(--muted)">• 2010</span></li>
+          <li>Aditi Rao <span style="font-size:12px;color:var(--muted)">• 2015</span></li>
+          <li>Siddharth Menon <span style="font-size:12px;color:var(--muted)">• 2016</span></li>
+          <li>Kavya Patel <span style="font-size:12px;color:var(--muted)">• 2017</span></li>
+          <li>Ananya Nair <span style="font-size:12px;color:var(--muted)">• 2018</span></li>
+          <li>Karan Malhotra <span style="font-size:12px;color:var(--muted)">• 2012</span></li>
+          <li>Simran Kaur <span style="font-size:12px;color:var(--muted)">• 2013</span></li>
+          <li>Ashish Bansal <span style="font-size:12px;color:var(--muted)">• 2011</span></li>
+          <li>Divya Verma <span style="font-size:12px;color:var(--muted)">• 2014</span></li>
+          <li>Nitin Bhalla <span style="font-size:12px;color:var(--muted)">• 2009</span></li>
+          <li>Sana Iqbal <span style="font-size:12px;color:var(--muted)">• 2010</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Students</h3>
+      <div class="list" id="studentList">
+        <ul>
+          <li>Aryan Gupta <span style="font-size:12px;color:var(--muted)">• 3rd yr</span></li>
+          <li>Isha Sharma <span style="font-size:12px;color:var(--muted)">• 2nd yr</span></li>
+          <li>Rajat Arora <span style="font-size:12px;color:var(--muted)">• 3rd yr</span></li>
+          <li>Mehul Joshi <span style="font-size:12px;color:var(--muted)">• 1st yr</span></li>
+          <li>Tanvi Chawla <span style="font-size:12px;color:var(--muted)">• 2nd yr</span></li>
+          <li>Aditya Jain <span style="font-size:12px;color:var(--muted)">• 3rd yr</span></li>
+          <li>Riya Kapoor <span style="font-size:12px;color:var(--muted)">• 2nd yr</span></li>
+          <li>Harsh Tiwari <span style="font-size:12px;color:var(--muted)">• 1st yr</span></li>
+          <li>Sanya Malhotra <span style="font-size:12px;color:var(--muted)">• 2nd yr</span></li>
+          <li>Vivek Kumar <span style="font-size:12px;color:var(--muted)">• 3rd yr</span></li>
+          <li>Kritika Sharma <span style="font-size:12px;color:var(--muted)">• 1st yr</span></li>
+          <li>Manish Pandey <span style="font-size:12px;color:var(--muted)">• 2nd yr</span></li>
+          <li>Pooja Reddy <span style="font-size:12px;color:var(--muted)">• 3rd yr</span></li>
+          <li>Rohit Verma <span style="font-size:12px;color:var(--muted)">• 2nd yr</span></li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <section class="chat">
+    <div class="chat-header">
+      <div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.9)">Group • Fintech Innovators</div>
+        <div style="font-weight:700;font-size:16px">Cohort Chat</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn" onclick="openRules()">Manage Rules</button>
+        <button class="btn" onclick="alert('Members')">Members</button>
+      </div>
+    </div>
+
+    <div class="messages panel" id="chatMessages">
+      <div class="message alumni"><strong>Rohit Sharma</strong><div style="font-size:13px;margin-top:6px">Welcome everyone — we will schedule a kickoff call next week.</div></div>
+      <div class="message student"><strong>Aryan Gupta</strong><div style="font-size:13px;margin-top:6px">Sounds good — available Tue/Wed evenings.</div></div>
+      <div class="message alumni"><strong>Priya Singh</strong><div style="font-size:13px;margin-top:6px">I'll share a draft agenda by tomorrow.</div></div>
+    </div>
+
+    <div class="chat-input">
+      <input id="chatInput" placeholder="Type a message..." onkeydown="if(event.key==='Enter') sendMsg()" />
+      <button onclick="sendMsg()">Send</button>
+    </div>
+  </section>
+</div>
+
+<div id="rulesModal" style="display:none;position:fixed;inset:0;background:rgba(5,20,40,0.5);align-items:center;justify-content:center;z-index:60">
+  <div class="panel" style="max-width:520px;padding:18px;">
+    <h3 style="margin:0 0 8px 0;color:var(--text-2)">Cohort Chat Rules</h3>
+    <p style="color:var(--muted);margin-top:6px">Add or edit rules for this cohort chat — set moderation, link-sharing policy and member privileges.</p>
+    <textarea id="rulesText" rows="6" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(30,70,120,0.06);margin-top:12px;background:#fdfeff;color:var(--text-1);">Be respectful. No spam. Use channel for fintech-related discussions only.</textarea>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+      <button class="btn" onclick="closeRules()">Cancel</button>
+      <button class="btn primary" onclick="saveRules()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function sendMsg(){
+    const input = document.getElementById('chatInput');
+    const txt = input.value.trim();
+    if(!txt) return;
+    const container = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'message student';
+    div.innerHTML = `<strong>You</strong><div style="font-size:13px;margin-top:6px">${escapeHtml(txt)}</div>`;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+    input.value = '';
+  }
+
+  function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  function openRules(){ document.getElementById('rulesModal').style.display='flex' }
+  function closeRules(){ document.getElementById('rulesModal').style.display='none' }
+  function saveRules(){ alert('Rules saved (placeholder)'); closeRules() }
+</script>
+
+</body>
+</html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fintech Innovators - Admin Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-1: #f6fbff;
+      --bg-2: #eef8ff;
+      --accent-1: #6aa7ff;
+      --accent-2: #83e3ff;
+      --heading-color: #0b3d66;
+      --text-color: #0b1220;
+      --muted-color: #6b7280;
+      --success-color: #10b981;
+      --warning-color: #f59e0b;
+      --danger-color: #ef4444;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+      margin: 0;
+      background: radial-gradient(circle at 10% 8%, rgba(131, 227, 255, 0.12), transparent 18%),
+                  linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+      color: var(--text-color);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(130, 200, 255, 0.22);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-brand {
+      font-size: 22px;
+      color: var(--heading-color);
+      font-weight: 700;
+    }
+
+    .admin-badge {
+      background: linear-gradient(135deg, var(--danger-color), #f87171);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 10px;
+    }
+
+    header button {
+      background: transparent;
+      border: 1px solid var(--heading-color);
+      color: var(--heading-color);
+      padding: 8px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    header button:hover {
+      background: var(--heading-color);
+      color: white;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+
+    .hero-section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    h1 {
+      color: var(--heading-color);
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .hero-description {
+      color: var(--muted-color);
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto 30px;
+      line-height: 1.6;
+    }
+
+    .admin-controls {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 25px rgba(30, 90, 140, 0.08);
+      border: 1px solid rgba(130, 200, 255, 0.22);
+    }
+
+    .control-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .admin-btn {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      color: white;
+      box-shadow: 0 4px 12px rgba(106, 167, 255, 0.3);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success-color), #34d399);
+      color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-warning {
+      background: linear-gradient(135deg, var(--warning-color), #fbbf24);
+      color: white;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger-color), #f87171);
+      color: white;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .admin-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(30, 90, 140, 0.08);
+      border: 1px solid rgba(130, 200, 255, 0.22);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent-1);
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      color: var(--muted-color);
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .members-section {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 10px 25px rgba(30, 90, 140, 0.08);
+      border: 1px solid rgba(130, 200, 255, 0.22);
+      margin-bottom: 30px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      color: var(--heading-color);
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .members-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .members-table th {
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      color: white;
+      padding: 15px 12px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .members-table td {
+      padding: 12px;
+      border-bottom: 1px solid rgba(130, 200, 255, 0.15);
+      font-size: 0.9rem;
+    }
+
+    .members-table tr:hover {
+      background: rgba(106, 167, 255, 0.05);
+    }
+
+    .member-status {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .status-active { background: rgba(16, 185, 129, 0.1); color: var(--success-color); }
+    .status-pending { background: rgba(245, 158, 11, 0.1); color: var(--warning-color); }
+    .status-inactive { background: rgba(107, 114, 128, 0.1); color: var(--muted-color); }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-small {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(11, 25, 42, 0.7);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+      background: white;
+      margin: 5% auto;
+      padding: 30px;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 18px;
+      position: relative;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    }
+
+    .modal h3 {
+      margin-top: 0;
+      color: var(--heading-color);
+      font-size: 1.4rem;
+      text-align: center;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--heading-color);
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+      width: calc(100% - 24px);
+      padding: 12px;
+      border: 1px solid rgba(130, 200, 255, 0.3);
+      border-radius: 8px;
+      background: #f6fbff;
+      font-family: inherit;
+    }
+
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: var(--accent-1);
+      box-shadow: 0 0 0 3px rgba(106, 167, 255, 0.2);
+    }
+
+    .close {
+      position: absolute;
+      right: 20px; top: 15px;
+      font-size: 28px;
+      color: var(--muted-color);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .close:hover { color: var(--heading-color); }
+
+    @media (max-width: 768px) {
+      .control-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .members-table {
+        font-size: 0.8rem;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <span class="header-brand">Alumni Nexus</span>
+      <span class="admin-badge">ADMIN</span>
+    </div>
+    <h1 style="margin: 0; font-size: 1.2rem;">Fintech Innovators - Management Panel</h1>
+    <button onclick="window.history.back()">← Back</button>
+  </header>
+
+  <div class="container">
+    <div class="hero-section">
+      <h1>Fintech Innovators Cohort</h1>
+      <p class="hero-description">
+        Administrative management panel for the Fintech Innovators community. 
+        Monitor member activities, approve applications, manage content, and oversee community growth.
+      </p>
+    </div>
+
+    <!-- Admin Controls -->
+    <div class="admin-controls">
+      <h3 style="margin-top: 0; color: var(--heading-color);">Administrative Controls</h3>
+      <div class="control-grid">
+        <button class="admin-btn btn-primary" onclick="openModal('addMember')">
+          + Add Member
+        </button>
+        <button class="admin-btn btn-success" onclick="openModal('announcement')">
+          📢 Send Announcement
+        </button>
+        <button class="admin-btn btn-warning" onclick="exportData()">
+          📊 Export Data
+        </button>
+        <button class="admin-btn btn-primary" onclick="openModal('settings')">
+          ⚙️ Cohort Settings
+        </button>
+        <button class="admin-btn btn-success" onclick="generateReport()">
+          📈 Generate Report
+        </button>
+        <button class="admin-btn btn-danger" onclick="confirmArchive()">
+          🗃️ Archive Cohort
+        </button>
+      </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="totalMembers">47</div>
+        <div class="stat-label">Total Members</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="activeMembers">42</div>
+        <div class="stat-label">Active Members</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="pendingApprovals">5</div>
+        <div class="stat-label">Pending Approvals</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="monthlyGrowth">+12%</div>
+        <div class="stat-label">Monthly Growth</div>
+      </div>
+    </div>
+
+    <!-- Members Management -->
+    <div class="members-section">
+      <div class="section-header">
+        <h3 class="section-title">Member Management</h3>
+        <button class="admin-btn btn-primary" onclick="refreshMembers()">🔄 Refresh</button>
+      </div>
+      
+      <table class="members-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Graduation Year</th>
+            <th>Status</th>
+            <th>Joined Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="membersTableBody">
+          <!-- Sample member data -->
+          <tr>
+            <td><strong>Rajesh Kumar</strong></td>
+            <td>rajesh.kumar@gmail.com</td>
+            <td>2020</td>
+            <td><span class="member-status status-active">Active</span></td>
+            <td>2024-08-15</td>
+            <td class="action-buttons">
+              <button class="btn-small btn-warning" onclick="editMember('raj123')">Edit</button>
+              <button class="btn-small btn-danger" onclick="removeMember('raj123')">Remove</button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Priya Sharma</strong></td>
+            <td>priya.sharma@yahoo.com</td>
+            <td>2019</td>
+            <td><span class="member-status status-pending">Pending</span></td>
+            <td>2024-11-20</td>
+            <td class="action-buttons">
+              <button class="btn-small btn-success" onclick="approveMember('pri456')">Approve</button>
+              <button class="btn-small btn-danger" onclick="rejectMember('pri456')">Reject</button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Amit Patel</strong></td>
+            <td>amit.patel@outlook.com</td>
+            <td>2021</td>
+            <td><span class="member-status status-active">Active</span></td>
+            <td>2024-09-10</td>
+            <td class="action-buttons">
+              <button class="btn-small btn-warning" onclick="editMember('ami789')">Edit</button>
+              <button class="btn-small btn-danger" onclick="removeMember('ami789')">Remove</button>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Sneha Gupta</strong></td>
+            <td>sneha.gupta@gmail.com</td>
+            <td>2018</td>
+            <td><span class="member-status status-inactive">Inactive</span></td>
+            <td>2024-07-05</td>
+            <td class="action-buttons">
+              <button class="btn-small btn-success" onclick="reactivateMember('sne101')">Reactivate</button>
+              <button class="btn-small btn-danger" onclick="removeMember('sne101')">Remove</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add Member Modal -->
+  <div id="addMemberModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('addMember')">&times;</span>
+      <h3>Add New Member</h3>
+      <div class="form-group">
+        <label>Member Email</label>
+        <input type="email" id="newMemberEmail" placeholder="Enter member's email">
+      </div>
+      <div class="form-group">
+        <label>Role</label>
+        <select id="newMemberRole">
+          <option value="member">Member</option>
+          <option value="moderator">Moderator</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <button class="admin-btn btn-primary" onclick="addMember()" style="width: 100%;">Add Member</button>
+    </div>
+  </div>
+
+  <!-- Announcement Modal -->
+  <div id="announcementModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('announcement')">&times;</span>
+      <h3>Send Announcement</h3>
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" id="announcementSubject" placeholder="Announcement subject">
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea id="announcementMessage" rows="4" placeholder="Your announcement message..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Send To</label>
+        <select id="announcementTarget">
+          <option value="all">All Members</option>
+          <option value="active">Active Members Only</option>
+          <option value="pending">Pending Members Only</option>
+        </select>
+      </div>
+      <button class="admin-btn btn-success" onclick="sendAnnouncement()" style="width: 100%;">Send Announcement</button>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('settings')">&times;</span>
+      <h3>Cohort Settings</h3>
+      <div class="form-group">
+        <label>Cohort Name</label>
+        <input type="text" id="cohortName" value="Fintech Innovators">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="cohortDescription" rows="3">Exploring the future of financial technology and innovation.</textarea>
+      </div>
+      <div class="form-group">
+        <label>Privacy Setting</label>
+        <select id="privacySetting">
+          <option value="public">Public</option>
+          <option value="private">Private</option>
+          <option value="invite-only">Invite Only</option>
+        </select>
+      </div>
+      <button class="admin-btn btn-primary" onclick="saveSettings()" style="width: 100%;">Save Settings</button>
+    </div>
+  </div>
+
+  <script>
+    // Modal Management
+    function openModal(modalType) {
+      document.getElementById(modalType + 'Modal').style.display = 'block';
+    }
+
+    function closeModal(modalType) {
+      document.getElementById(modalType + 'Modal').style.display = 'none';
+    }
+
+    // Member Management Functions
+    function addMember() {
+      const email = document.getElementById('newMemberEmail').value;
+      const role = document.getElementById('newMemberRole').value;
+      
+      if (email) {
+        alert(`Member ${email} added as ${role}!`);
+        closeModal('addMember');
+        // Here you would make an API call to add the member
+      } else {
+        alert('Please enter a valid email address.');
+      }
+    }
+
+    function editMember(memberId) {
+      alert(`Edit member: ${memberId}`);
+      // Open edit modal with member data
+    }
+
+    function removeMember(memberId) {
+      if (confirm('Are you sure you want to remove this member?')) {
+        alert(`Member ${memberId} removed!`);
+        // API call to remove member
+      }
+    }
+
+    function approveMember(memberId) {
+      alert(`Member ${memberId} approved!`);
+      // API call to approve member
+    }
+
+    function rejectMember(memberId) {
+      if (confirm('Are you sure you want to reject this member?')) {
+        alert(`Member ${memberId} rejected!`);
+        // API call to reject member
+      }
+    }
+
+    function reactivateMember(memberId) {
+      alert(`Member ${memberId} reactivated!`);
+      // API call to reactivate member
+    }
+
+    // Admin Functions
+    function sendAnnouncement() {
+      const subject = document.getElementById('announcementSubject').value;
+      const message = document.getElementById('announcementMessage').value;
+      const target = document.getElementById('announcementTarget').value;
+      
+      if (subject && message) {
+        alert(`Announcement "${subject}" sent to ${target}!`);
+        closeModal('announcement');
+        // API call to send announcement
+      } else {
+        alert('Please fill in all fields.');
+      }
+    }
+
+    function exportData() {
+      alert('Exporting member data...');
+      // Generate and download CSV/Excel file
+    }
+
+    function generateReport() {
+      alert('Generating monthly activity report...');
+      // Generate PDF report
+    }
+
+    function saveSettings() {
+      const name = document.getElementById('cohortName').value;
+      alert(`Settings saved for "${name}"!`);
+      closeModal('settings');
+      // API call to save settings
+    }
+
+    function confirmArchive() {
+      if (confirm('Are you sure you want to archive this cohort? This action cannot be undone.')) {
+        alert('Cohort archived successfully!');
+        // API call to archive cohort
+      }
+    }
+
+    function refreshMembers() {
+      alert('Refreshing member list...');
+      // Reload member data from server
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>

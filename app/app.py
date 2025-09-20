@@ -5,6 +5,7 @@ import uuid
 from datetime import datetime
 import sys
 import random
+from dotenv import load_dotenv
 
 # Make sure to adjust this path if your project structure is different
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -17,9 +18,11 @@ from src.utils.database import get_all_admins, get_all_students, get_all_alumni
 from src.utils.database import login_credential_exists, verify_student_credentials
 from flask import jsonify
 
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'  # Required for flash messages
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 # Configuration for file uploads
 UPLOAD_FOLDER = 'uploads'
@@ -52,8 +55,7 @@ def init_db():
     create_database()
     create_tables()
     tables = show_tables()
-    print("Current tables in AlumniNexus database:", tables)
-    return "✅ Alumni Nexus DB and tables created!"
+    return f"✅ Alumni Nexus DB and tables created!, {tables}"
 
 @app.route("/del-tables")
 def del_tables():
@@ -108,7 +110,6 @@ def register():
 
             # --- Insert into DB ---
             sid = insert_student(name, college, email, student_id_form, department, grad_year, degree, password)
-            print(f"Assigned Student ID: {sid}")
 
         elif status == 'college':
             email = request.form.get('college_email')
@@ -125,7 +126,6 @@ def register():
 
             # --- Insert into DB ---
             admin_id = insert_admin(name, college, email, admin_code, admin_department, password)
-            print(f"Assigned Admin ID: {admin_id}")
 
         elif status == 'alumni':
             email = request.form.get('alumni_email')
@@ -148,7 +148,6 @@ def register():
                 name, college, email, department, grad_year, degree,
                 file_info['filepath'] if file_info else None, password
             )
-            print(f"Assigned Alumni ID: {alumni_id}")
 
         flash(f'Registration successful! Welcome {name}!, Please log in to continue.', 'success')
         return redirect(url_for('home'))
@@ -187,7 +186,7 @@ def login_student():
         session['student_email'] = student['email']
         session['student_name'] = student['name']
         
-        flash(f"Welcome, {email}!", "success")
+        # flash(f"Welcome, {email}!", "success")
         return redirect(url_for('student_dashboard'))
 
     return render_template('loginstudent.html')
@@ -222,11 +221,9 @@ def student_card():
     if not student:
         flash("Student not found!", "error")
         return redirect(url_for('login_student'))
-    
 
-    print(student)  # Debugging line to check fetched student data
 
-    year = student['graduation_year'] - 4 if student['degree'] == 'Bachelors' else student['graduation_year'] - 2
+    year = student['graduation_year'] - 4 if student['degree'] == 'BTech' else student['graduation_year'] - 2
     since_year = student['graduation_year']
     name = student['name']
     college = student['college']
@@ -242,15 +239,211 @@ def student_card():
                          degree=degree, since_year=since_year, first_five_numb=first_five_numb, 
                          last_five_numb=last_five_numb)
 
+import random  # Add this import at the top of your file
+
+@app.route("/fintech-stud")
+def fintech_stud():
+    return render_template("fintech2 stud.html")
+
 @app.route('/login-alumni', methods=['GET', 'POST'])
 def login_alumni():
-    pass
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        if not login_credential_exists(email, status='alumni'):
+            flash("Email not registered. Please register first!", "error")
+            return redirect(url_for('login_alumni'))
+
+        if not verify_student_credentials(email, password, status='alumni'):
+            flash("Incorrect password. Try again!", "error")
+            return redirect(url_for('login_alumni'))
+
+        # Fetch alumni data from DB
+        conn = get_connection("AlumniNexus")
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM Alumni WHERE email=%s", (email,))
+        alumni = cursor.fetchone()
+        conn.close()
+
+        if not alumni:
+            flash("Alumni not found!", "error")
+            return redirect(url_for('login_alumni'))
+
+        # Store complete alumni info in session
+        session['logged_in'] = True
+        session['user_type'] = 'alumni'
+        session['alumni_id'] = alumni['id']
+        session['alumni_email'] = alumni['email']
+        session['alumni_name'] = alumni['name']
+
+        # flash(f"Welcome, {email}!", "success")
+        return redirect(url_for('alumni_dashboard'))
+
+    return render_template('loginalumni.html')
+
+
+@app.route('/alumni-dashboard')
+def alumni_dashboard():
+    # Simple session check
+    if not session.get('logged_in') or session.get('user_type') != 'alumni':
+        flash("Please log in first!", "error")
+        return redirect(url_for('login_alumni'))
+    
+    alumni_id = session.get('alumni_id')
+    return render_template('alumnipage.html', alumni_id=alumni_id)
+
+
+@app.route('/alumni-card')
+def alumni_card():
+    # Simple session check
+    if not session.get('logged_in') or session.get('user_type') != 'alumni':
+        flash("Please log in first!", "error")
+        return redirect(url_for('login_alumni'))
+    
+    alumni_id = session.get('alumni_id')
+    
+    conn = get_connection("AlumniNexus")
+    cursor = conn.cursor()
+    # FIXED: Query Alumni table instead of Students table
+    cursor.execute("SELECT * FROM Alumni WHERE id=%s", (alumni_id,))
+    alumni = cursor.fetchone()
+    conn.close()
+
+    if not alumni:
+        flash("Alumni not found!", "error")
+        return redirect(url_for('login_alumni'))
+
+
+    job_roles = job_roles = [
+                    "Software Engineer","Frontend Developer","Backend Developer","Full Stack Developer","Mobile App Developer","DevOps Engineer",
+                        "Site Reliability Engineer (SRE)","Embedded Systems Engineer","Game Developer","Software Architect","QA Engineer",
+                            "Data Scientist","Data Analyst","Machine Learning Engineer","AI Specialist","Data Engineer","Business Intelligence Analyst","Product Manager",
+                               "UI/UX Designer","Product Designer","UX Researcher","Graphic Designer","Cloud Engineer","Systems Administrator","Network Engineer",
+                                    "Cybersecurity Analyst","IT Support Specialist","Database Administrator","Engineering Manager","Technical Lead","Project Manager",
+                                        "Scrum Master","Chief Technology Officer (CTO)","Solutions Architect","Technical Writer","Business Analyst",
+    ]
+    
+    
+    tech_companies = [
+                "Google", "Apple", "Meta", "Amazon", "Microsoft", "Netflix", "Salesforce", "Adobe", "Oracle", 
+                  "IBM", "SAP", "Atlassian", "Snowflake", "ServiceNow", "VMware", "Databricks", "NVIDIA", "Intel",
+                    "AMD", "Qualcomm", "Cisco Systems", "Dell Technologies", "Stripe", "PayPal", "Block (Square)",
+                      "Goldman Sachs", "JPMorgan Chase & Co.", "Tesla", "SpaceX", "Ford", "General Motors", 
+                        "Electronic Arts (EA)", "Activision Blizzard", "Epic Games", "Unity Technologies", "Spotify", 
+                          "Disney", "Uber", "Airbnb", "LinkedIn", "X (formerly Twitter)", "Slack", "Zoom", "Dropbox"
+                      ]
+    
+    cities = ["Gurugram, India", "Mumbai, India", "Delhi, India", "Bangalore, India", "Chennai, India", "Kolkata, India",
+               "Hyderabad, India", "Pune, India", "Ahmedabad, India", "Jaipur, India", "Lucknow, India", "New York, USA",
+                 "London, UK", "Tokyo, Japan", "Paris, France", "Singapore, Singapore", "Dubai, UAE", "Sydney, Australia",
+                   "Toronto, Canada", "San Francisco, USA", "Berlin, Germany", "Hong Kong, Hong Kong", "Amsterdam, Netherlands",
+                     "Seoul, South Korea", "Los Angeles, USA", "Chicago, USA", "Beijing, China", "Moscow, Russia", "Rome, Italy",
+                       "Madrid, Spain", "Sao Paulo, Brazil"]
+
+
+    # Extract alumni data using correct column names
+    year = alumni['graduation_year'] - 4 if alumni['degree'] == 'Bachelors' else alumni['graduation_year'] - 2
+    since_year = alumni['graduation_year']
+    name = alumni['name']
+    college = alumni['college']
+    email = alumni['email']
+    alumni_id_from_db = alumni['id']
+    college_department = alumni['department']
+    degree = alumni['degree']
+    role = random.choice(job_roles)
+    company = random.choice(tech_companies)
+    # Generate random numbers for card
+    first_five_numb = 90000 + random.randint(1000, 9999)
+    last_five_numb = random.randint(10000, 99999)
+
+    return render_template('alumnicard.html', 
+                         year=year, 
+                         name=name, 
+                         college=college,
+                         email=email, 
+                         alumni_id=alumni_id_from_db, 
+                         college_department=college_department, 
+                         degree=degree, 
+                         since_year=since_year, 
+                         first_five_numb=first_five_numb, 
+                         last_five_numb=last_five_numb,
+                         role= role,
+                         company = company,
+                         random_numb = random.randint(1000, 9999),
+                         city = random.choice(cities)                         
+    )
+
 
 @app.route('/login-college', methods=['GET', 'POST'])
 def login_college():
-    pass
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        if not login_credential_exists(email, status='college'):
+            flash("Email not registered. Please register first!", "error")
+            return redirect(url_for('login_college'))
+
+        if not verify_student_credentials(email, password, status='college'):
+            flash("Incorrect password. Try again!", "error")
+            return redirect(url_for('login_college'))
+
+        # Fetch admin data from DB (corrected table name)
+        conn = get_connection("AlumniNexus")
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM Admins WHERE email=%s", (email,))
+        admin = cursor.fetchone()
+        conn.close()
+
+        if not admin:
+            flash("Admin not found!", "error")
+            return redirect(url_for('login_college'))
+
+        # Store complete admin info in session
+        session['logged_in'] = True
+        session['user_type'] = 'admin'
+        session['admin_id'] = admin['id']
+        session['admin_email'] = admin['email']
+        session['admin_name'] = admin['name']
+        
+        # flash(f"Welcome, {email}!", "success")
+        return redirect(url_for('admin_dashboard'))
+
+    return render_template("logincollege.html")
 
 
+@app.route('/admin-dashboard')
+def admin_dashboard():
+    # Simple session check
+    if not session.get('logged_in') or session.get('user_type') != 'admin':
+        flash("Please log in first!", "error")
+        return redirect(url_for('login_college'))
+    
+    admin_id = session.get('admin_id')
+    return render_template('index.html', admin_id=admin_id)
+
+@app.route("/fintech")
+def fintech():
+    return render_template("fintech2.html")
+
+@app.route('/alumni-database')
+def alumni_database():
+    # Simple session check for admin
+    if not session.get('logged_in') or session.get('user_type') != 'admin':
+        flash("Please log in as admin first!", "error")
+        return redirect(url_for('login_college'))
+    
+    return render_template('alumni_database.html')
+
+@app.route('/student-database')
+def student_database():
+    # Simple session check for admin
+    if not session.get('logged_in') or session.get('user_type') != 'admin':
+        flash("Please log in as admin first!", "error")
+        return redirect(url_for('login_college'))
+    
+    return render_template('student_database.html')
 
 # ---------------- DISABLE BACK AFTER LOGOUT ----------------
 @app.after_request

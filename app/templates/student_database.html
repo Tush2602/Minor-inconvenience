@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student Database - PEC Alumni Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-1: #f6fbff;
+      --bg-2: #eef8ff;
+      --accent-1: #6aa7ff;
+      --accent-2: #83e3ff;
+      --heading-color: #0b3d66;
+      --text-color: #0b1220;
+      --muted-color: #6b7280;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+      margin: 0;
+      background:
+        radial-gradient(circle at 10% 8%, rgba(131, 227, 255, 0.12), transparent 18%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+      color: var(--text-color);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(130, 200, 255, 0.22);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-brand {
+      font-size: 22px;
+      color: var(--heading-color);
+      font-weight: 700;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+      color: var(--heading-color);
+      font-weight: 700;
+    }
+
+    header button {
+      background: transparent;
+      border: 1px solid var(--heading-color);
+      color: var(--heading-color);
+      padding: 8px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    header button:hover {
+      background: var(--heading-color);
+      color: white;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+
+    h2 {
+      color: var(--heading-color);
+      margin-bottom: 10px;
+      text-align: center;
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      color: var(--muted-color);
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 30px auto;
+      line-height: 1.6;
+    }
+
+    .search-bar {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(30, 90, 140, 0.06);
+      border: 1px solid rgba(130, 200, 255, 0.22);
+    }
+
+    .search-bar input {
+      width: calc(100% - 32px);
+      padding: 12px 16px;
+      border: 1px solid rgba(130, 200, 255, 0.22);
+      border-radius: 8px;
+      background: #f6fbff;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .search-bar input:focus {
+      outline: none;
+      border-color: var(--accent-1);
+      box-shadow: 0 0 0 3px rgba(106, 167, 255, 0.2);
+    }
+
+    .database-table {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 30px 60px rgba(30, 90, 140, 0.08);
+      border: 1px solid rgba(130, 200, 255, 0.22);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      color: white;
+      padding: 18px 15px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    td {
+      padding: 15px;
+      border-bottom: 1px solid rgba(130, 200, 255, 0.15);
+      font-size: 0.9rem;
+    }
+
+    tr:hover {
+      background: rgba(106, 167, 255, 0.05);
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(106, 167, 255, 0.1);
+      color: #0b5ea8;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 10px;
+      font-size: 11px;
+    }
+
+    .student-id {
+      background: rgba(40, 167, 69, 0.1);
+      color: #0b5a0b;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-size: 11px;
+    }
+
+    .email {
+      color: var(--accent-1);
+      font-weight: 500;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted-color);
+      font-size: 1.1rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(235,249,255,0.95));
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 15px 30px rgba(30,90,140,0.06);
+      border: 1px solid rgba(130,200,255,0.22);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent-1);
+      margin: 0;
+    }
+
+    .stat-label {
+      color: var(--muted-color);
+      font-weight: 600;
+      margin-top: 5px;
+    }
+
+    @media (max-width: 768px) {
+      .database-table {
+        overflow-x: auto;
+      }
+      
+      table {
+        min-width: 700px;
+      }
+      
+      th, td {
+        padding: 12px 8px;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-brand">Alumni Nexus</div>
+    <h1>Student Database</h1>
+    <button onclick="window.history.back()">← Back</button>
+  </header>
+
+  <div class="container">
+    <h2>Student Directory</h2>
+    <p class="subtitle">Complete directory of all registered current students with their academic details and information.</p>
+
+    <div class="stats" id="statsContainer">
+      <div class="stat-card">
+        <div class="stat-number" id="totalStudents">0</div>
+        <div class="stat-label">Total Students</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalDepartments">0</div>
+        <div class="stat-label">Departments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalColleges">0</div>
+        <div class="stat-label">Colleges</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="avgGradYear">0</div>
+        <div class="stat-label">Avg Grad Year</div>
+      </div>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search students by name, email, student ID, department, or college...">
+    </div>
+
+    <div class="database-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>College</th>
+            <th>Department</th>
+            <th>Degree</th>
+            <th>Graduation Year</th>
+            <th>Registration Date</th>
+          </tr>
+        </thead>
+        <tbody id="studentTableBody">
+          <!-- Student data will be loaded here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    let studentData = [
+      {
+        id: 'PEC2024001',
+        name: 'Aarav Sharma',
+        email: 'aarav.sharma@student.pec.edu',
+        college: 'Punjab Engineering College',
+        department: 'Computer Science',
+        degree: 'Bachelors',
+        graduation_year: 2026,
+        registration_date: '2024-08-15T10:30:00Z'
+      },
+      {
+        id: 'PEC2024002',
+        name: 'Diya Patel',
+        email: 'diya.patel@student.pec.edu',
+        college: 'Punjab Engineering College',
+        department: 'Electronics & Communication',
+        degree: 'Bachelors',
+        graduation_year: 2027,
+        registration_date: '2024-08-20T14:45:00Z'
+      },
+      {
+        id: 'PEC2024003',
+        name: 'Kabir Singh',
+        email: 'kabir.singh@student.pec.edu',
+        college: 'Punjab Engineering College',
+        department: 'Mechanical Engineering',
+        degree: 'Bachelors',
+        graduation_year: 2026,
+        registration_date: '2024-07-10T09:15:00Z'
+      },
+      {
+        id: 'PEC2024004',
+        name: 'Ananya Gupta',
+        email: 'ananya.gupta@student.pec.edu',
+        college: 'Punjab Engineering College',
+        department: 'Civil Engineering',
+        degree: 'Bachelors',
+        graduation_year: 2027,
+        registration_date: '2024-09-25T16:20:00Z'
+      },
+      {
+        id: 'PEC2024005',
+        name: 'Vihaan Kumar',
+        email: 'vihaan.kumar@student.pec.edu',
+        college: 'Punjab Engineering College',
+        department: 'Computer Science',
+        degree: 'Masters',
+        graduation_year: 2025,
+        registration_date: '2024-06-12T11:10:00Z'
+      },
+      {
+        id: 'PEC2024006',
+        name: 'Ishita Reddy',
+        email: 'ishita.reddy@student.pec.edu',
+        college: 'Punjab Engineering College',
+        department: 'Information Technology',
+        degree: 'Bachelors',
+        graduation_year: 2028,
+        registration_date: '2024-10-08T13:30:00Z'
+      },
+      {
+        id: 'PEC2024007',
+        name: 'Aryan Malhotra',
+        email: 'aryan.malhotra@student.pec.edu',
+        college: 'Punjab Engineering College',
+        department: 'Electrical Engineering',
+        degree: 'Bachelors',
+        graduation_year: 2026,
+        registration_date: '2024-05-18T08:45:00Z'
+      },
+      {
+        id: 'PEC2024008',
+        name: 'Saanvi Verma',
+        email: 'saanvi.verma@student.pec.edu',
+        college: 'Punjab Engineering College',
+        department: 'Chemical Engineering',
+        degree: 'Masters',
+        graduation_year: 2025,
+        registration_date: '2024-04-22T15:25:00Z'
+      },
+      {
+        id: 'PEC2024009',
+        name: 'Reyansh Kapoor',
+        email: 'reyansh.kapoor@student.pec.edu',
+        college: 'Punjab Engineering College',
+        department: 'Computer Science',
+        degree: 'Bachelors',
+        graduation_year: 2027,
+        registration_date: '2024-11-15T12:00:00Z'
+      },
+      {
+        id: 'PEC2024010',
+        name: 'Myra Agarwal',
+        email: 'myra.agarwal@student.pec.edu',
+        college: 'Punjab Engineering College',
+        department: 'Biotechnology',
+        degree: 'Masters',
+        graduation_year: 2025,
+        registration_date: '2024-03-10T17:30:00Z'
+      },
+      {
+        id: 'PEC2024011',
+        name: 'Dhruv Joshi',
+        email: 'dhruv.joshi@student.pec.edu',
+        college: 'Punjab Engineering College',
+        department: 'Aerospace Engineering',
+        degree: 'Bachelors',
+        graduation_year: 2026,
+        registration_date: '2024-02-15T10:20:00Z'
+      },
+      {
+        id: 'PEC2024012',
+        name: 'Kiara Singh',
+        email: 'kiara.singh@student.pec.edu',
+        college: 'Punjab Engineering College',
+        department: 'Environmental Engineering',
+        degree: 'Masters',
+        graduation_year: 2025,
+        registration_date: '2024-01-20T14:15:00Z'
+      }
+    ];
+
+    async function loadStudentData() {
+      try {
+        // Try to fetch real data first, fallback to dummy data
+        const response = await fetch('/get-tables');
+        const data = await response.json();
+        if (data.Students && data.Students.length > 0) {
+          studentData = data.Students;
+        }
+        // If no real data, keep dummy data
+        
+        displayStudentData(studentData);
+        updateStats();
+      } catch (error) {
+        console.error('Error loading student data, using dummy data:', error);
+        // Use dummy data on error
+        displayStudentData(studentData);
+        updateStats();
+      }
+    }
+
+    function displayStudentData(data) {
+      const tbody = document.getElementById('studentTableBody');
+      
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="no-data">No student records found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = data.map(student => `
+        <tr>
+          <td><span class="student-id">${student.id}</span></td>
+          <td><strong>${student.name}</strong></td>
+          <td><span class="email">${student.email}</span></td>
+          <td>${student.college}</td>
+          <td><span class="badge">${student.department}</span></td>
+          <td>${student.degree}</td>
+          <td>${student.graduation_year}</td>
+          <td>${formatDate(student.registration_date)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function updateStats() {
+      const total = studentData.length;
+      const departments = [...new Set(studentData.map(s => s.department))].length;
+      const colleges = [...new Set(studentData.map(s => s.college))].length;
+      const avgYear = total > 0 ? 
+        Math.round(studentData.reduce((sum, s) => sum + s.graduation_year, 0) / total) : 0;
+
+      document.getElementById('totalStudents').textContent = total;
+      document.getElementById('totalDepartments').textContent = departments;
+      document.getElementById('totalColleges').textContent = colleges;
+      document.getElementById('avgGradYear').textContent = avgYear;
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return 'N/A';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      });
+    }
+
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      const filteredData = studentData.filter(student => 
+        student.name.toLowerCase().includes(searchTerm) ||
+        student.email.toLowerCase().includes(searchTerm) ||
+        student.id.toLowerCase().includes(searchTerm) ||
+        student.department.toLowerCase().includes(searchTerm) ||
+        student.college.toLowerCase().includes(searchTerm) ||
+        student.degree.toLowerCase().includes(searchTerm)
+      );
+      displayStudentData(filteredData);
+    });
+
+    // Load data when page loads
+    window.addEventListener('load', loadStudentData);
+  </script>
+</body>
+</html>

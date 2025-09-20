@@ -41,8 +41,8 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      position: relative; /* Added for child absolute positioning */
     }
+    /* Fixed header layout - removed absolute positioning for better alignment */
     .header-brand {
       font-size: 22px;
       color: var(--heading-color);
@@ -52,11 +52,7 @@
       margin: 0;
       font-size: 22px;
       color: var(--heading-color);
-      /* Centering styles */
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      white-space: nowrap;
+      font-weight: 700;
     }
     header button {
       background: transparent;
@@ -257,11 +253,16 @@
 <body>
 
   <header>
+    <!-- Restored proper header structure with brand name and logout button -->
     <div class="header-brand">Alumni Nexus</div>
     <h1>PEC Alumni Portal</h1>
-    <button>Logout</button>
+    <form action="{{ url_for('logout') }}" method="get" style="display:inline;">
+  <button type="submit">Logout</button>
+</form>
+
   </header>
 
+  <!-- Restored the Events section that was commented out -->
   <section id="events">
     <h2>Events</h2>
     <p>Discover, register for, and participate in upcoming online and offline alumni events.</p>
@@ -295,7 +296,7 @@
     <h2>Cohorts & Groups</h2>
     <p>Connect with like-minded alumni in your areas of interest and collaborate on exciting projects.</p>
     <div class="grid-container">
-      <div class="card"><h3>Fintech Innovators</h3><p>Exploring the future of financial technology.</p><button class="action-btn">View</button></div>
+      <div class="card"><h3>Fintech Innovators</h3><p>Exploring the future of financial technology.</p><a href="{{url_for('fintech')}}"><button class="action-btn">View</button></a></div>
       <div class="card"><h3>Tech Entrepreneurs</h3><p>A hub for founders and innovators.</p><button class="action-btn">View</button></div>
       <div class="card"><h3>Open Source Contributors</h3><p>Collaborate on impactful open-source projects.</p><button class="action-btn">View</button></div>
       <div class="card"><h3>Global Alumni Network</h3><p>Connecting PEC alumni across the globe.</p><button class="action-btn">View</button></div>
@@ -319,8 +320,8 @@
     <h2>Database Access</h2>
     <p>Access centralized databases for alumni and current student information.</p>
     <div class="section-actions">
-        <button class="action-btn" onclick="location.href='#'">Alumni Database</button>
-        <button class="action-btn" onclick="location.href='#'" style="margin-left: 15px;">Student Database</button>
+        <button class="action-btn" onclick="location.href='{{ url_for('alumni_database') }}'">Alumni Database</button>
+        <button class="action-btn" onclick="location.href='{{ url_for('student_database') }}'">Student Database</button>
     </div>
   </section>
 

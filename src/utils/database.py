@@ -1,7 +1,12 @@
 import uuid
 import pymysql
+from dotenv import load_dotenv
+import os
+import sys
 
 from src.utils.auth_utils import verify_password
+
+load_dotenv()
 
 # Connection to Aiven MySQL
 def get_connection(db_name=None):
@@ -9,12 +14,12 @@ def get_connection(db_name=None):
         charset="utf8mb4",
         connect_timeout=10,
         cursorclass=pymysql.cursors.DictCursor,
-        db=db_name if db_name else "defaultdb",  # connect to given db or default
-        host="mysql-30f4b6fc-alumninexus2602-5360.c.aivencloud.com",
-        password="AVNS_eT7djETZcw4TLUhdWYK",
+        db=db_name if db_name else os.getenv("DB_NAME"),  # connect to given db or default
+        host=os.getenv("DB_HOST"),
+        password=os.getenv("DB_PASSWORD"),
         read_timeout=10,
-        port=12818,
-        user="avnadmin",
+        port=int(os.getenv("DB_PORT")),
+        user=os.getenv("DB_USER"),
         write_timeout=10,
     )
 

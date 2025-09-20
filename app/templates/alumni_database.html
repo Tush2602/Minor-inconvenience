@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Alumni Database - PEC Alumni Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-1: #f6fbff;
+      --bg-2: #eef8ff;
+      --accent-1: #6aa7ff;
+      --accent-2: #83e3ff;
+      --heading-color: #0b3d66;
+      --text-color: #0b1220;
+      --muted-color: #6b7280;
+    }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+      margin: 0;
+      background:
+        radial-gradient(circle at 10% 8%, rgba(131, 227, 255, 0.12), transparent 18%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+      color: var(--text-color);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(130, 200, 255, 0.22);
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-brand {
+      font-size: 22px;
+      color: var(--heading-color);
+      font-weight: 700;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+      color: var(--heading-color);
+      font-weight: 700;
+    }
+
+    header button {
+      background: transparent;
+      border: 1px solid var(--heading-color);
+      color: var(--heading-color);
+      padding: 8px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    header button:hover {
+      background: var(--heading-color);
+      color: white;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 30px;
+    }
+
+    h2 {
+      color: var(--heading-color);
+      margin-bottom: 10px;
+      text-align: center;
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      color: var(--muted-color);
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 30px auto;
+      line-height: 1.6;
+    }
+
+    .search-bar {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(30, 90, 140, 0.06);
+      border: 1px solid rgba(130, 200, 255, 0.22);
+    }
+
+    .search-bar input {
+      width: calc(100% - 32px);
+      padding: 12px 16px;
+      border: 1px solid rgba(130, 200, 255, 0.22);
+      border-radius: 8px;
+      background: #f6fbff;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .search-bar input:focus {
+      outline: none;
+      border-color: var(--accent-1);
+      box-shadow: 0 0 0 3px rgba(106, 167, 255, 0.2);
+    }
+
+    .database-table {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 30px 60px rgba(30, 90, 140, 0.08);
+      border: 1px solid rgba(130, 200, 255, 0.22);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+      color: white;
+      padding: 18px 15px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    td {
+      padding: 15px;
+      border-bottom: 1px solid rgba(130, 200, 255, 0.15);
+      font-size: 0.9rem;
+    }
+
+    tr:hover {
+      background: rgba(106, 167, 255, 0.05);
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(106, 167, 255, 0.1);
+      color: #0b5ea8;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 10px;
+      font-size: 11px;
+    }
+
+    .email {
+      color: var(--accent-1);
+      font-weight: 500;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted-color);
+      font-size: 1.1rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(235,249,255,0.95));
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 15px 30px rgba(30,90,140,0.06);
+      border: 1px solid rgba(130,200,255,0.22);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent-1);
+      margin: 0;
+    }
+
+    .stat-label {
+      color: var(--muted-color);
+      font-weight: 600;
+      margin-top: 5px;
+    }
+
+    @media (max-width: 768px) {
+      .database-table {
+        overflow-x: auto;
+      }
+      
+      table {
+        min-width: 600px;
+      }
+      
+      th, td {
+        padding: 12px 8px;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-brand">Alumni Nexus</div>
+    <h1>Alumni Database</h1>
+    <button onclick="window.history.back()">← Back</button>
+  </header>
+
+  <div class="container">
+    <h2>Alumni Directory</h2>
+    <p class="subtitle">Complete directory of all registered alumni with their professional and academic details.</p>
+
+    <div class="stats" id="statsContainer">
+      <div class="stat-card">
+        <div class="stat-number" id="totalAlumni">0</div>
+        <div class="stat-label">Total Alumni</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalDepartments">0</div>
+        <div class="stat-label">Departments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalColleges">0</div>
+        <div class="stat-label">Colleges</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="avgGradYear">0</div>
+        <div class="stat-label">Avg Grad Year</div>
+      </div>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search alumni by name, email, department, or college...">
+    </div>
+
+    <div class="database-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>College</th>
+            <th>Department</th>
+            <th>Degree</th>
+            <th>Graduation Year</th>
+            <th>Registration Date</th>
+          </tr>
+        </thead>
+        <tbody id="alumniTableBody">
+          <!-- Alumni data will be loaded here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    let alumniData = [
+      {
+        id: 'alum-001',
+        name: 'Rajesh Kumar Singh',
+        email: 'rajesh.singh@gmail.com',
+        college: 'Punjab Engineering College',
+        department: 'Computer Science',
+        degree: 'Bachelors',
+        graduation_year: 2020,
+        registration_date: '2023-08-15T10:30:00Z'
+      },
+      {
+        id: 'alum-002',
+        name: 'Priya Sharma',
+        email: 'priya.sharma@yahoo.com',
+        college: 'Punjab Engineering College',
+        department: 'Electronics & Communication',
+        degree: 'Masters',
+        graduation_year: 2019,
+        registration_date: '2023-09-20T14:45:00Z'
+      },
+      {
+        id: 'alum-003',
+        name: 'Amit Patel',
+        email: 'amit.patel@outlook.com',
+        college: 'Punjab Engineering College',
+        department: 'Mechanical Engineering',
+        degree: 'Bachelors',
+        graduation_year: 2021,
+        registration_date: '2023-07-10T09:15:00Z'
+      },
+      {
+        id: 'alum-004',
+        name: 'Sneha Gupta',
+        email: 'sneha.gupta@gmail.com',
+        college: 'Punjab Engineering College',
+        department: 'Civil Engineering',
+        degree: 'Bachelors',
+        graduation_year: 2018,
+        registration_date: '2023-06-25T16:20:00Z'
+      },
+      {
+        id: 'alum-005',
+        name: 'Vikram Singh',
+        email: 'vikram.singh@rediffmail.com',
+        college: 'Punjab Engineering College',
+        department: 'Computer Science',
+        degree: 'Masters',
+        graduation_year: 2017,
+        registration_date: '2023-05-12T11:10:00Z'
+      },
+      {
+        id: 'alum-006',
+        name: 'Kavya Reddy',
+        email: 'kavya.reddy@gmail.com',
+        college: 'Punjab Engineering College',
+        department: 'Information Technology',
+        degree: 'Bachelors',
+        graduation_year: 2022,
+        registration_date: '2023-10-08T13:30:00Z'
+      },
+      {
+        id: 'alum-007',
+        name: 'Rohit Malhotra',
+        email: 'rohit.malhotra@hotmail.com',
+        college: 'Punjab Engineering College',
+        department: 'Electrical Engineering',
+        degree: 'Bachelors',
+        graduation_year: 2016,
+        registration_date: '2023-04-18T08:45:00Z'
+      },
+      {
+        id: 'alum-008',
+        name: 'Anisha Verma',
+        email: 'anisha.verma@gmail.com',
+        college: 'Punjab Engineering College',
+        department: 'Chemical Engineering',
+        degree: 'Masters',
+        graduation_year: 2015,
+        registration_date: '2023-03-22T15:25:00Z'
+      },
+      {
+        id: 'alum-009',
+        name: 'Arjun Kapoor',
+        email: 'arjun.kapoor@yahoo.com',
+        college: 'Punjab Engineering College',
+        department: 'Computer Science',
+        degree: 'Bachelors',
+        graduation_year: 2023,
+        registration_date: '2024-01-15T12:00:00Z'
+      },
+      {
+        id: 'alum-010',
+        name: 'Pooja Agarwal',
+        email: 'pooja.agarwal@gmail.com',
+        college: 'Punjab Engineering College',
+        department: 'Biotechnology',
+        degree: 'Masters',
+        graduation_year: 2014,
+        registration_date: '2023-02-10T17:30:00Z'
+      }
+    ];
+
+    async function loadAlumniData() {
+      try {
+        // Try to fetch real data first, fallback to dummy data
+        const response = await fetch('/get-tables');
+        const data = await response.json();
+        if (data.Alumni && data.Alumni.length > 0) {
+          alumniData = data.Alumni;
+        }
+        // If no real data, keep dummy data
+        
+        displayAlumniData(alumniData);
+        updateStats();
+      } catch (error) {
+        console.error('Error loading alumni data, using dummy data:', error);
+        // Use dummy data on error
+        displayAlumniData(alumniData);
+        updateStats();
+      }
+    }
+
+    function displayAlumniData(data) {
+      const tbody = document.getElementById('alumniTableBody');
+      
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="no-data">No alumni records found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = data.map(alumni => `
+        <tr>
+          <td><strong>${alumni.name}</strong></td>
+          <td><span class="email">${alumni.email}</span></td>
+          <td>${alumni.college}</td>
+          <td><span class="badge">${alumni.department}</span></td>
+          <td>${alumni.degree}</td>
+          <td>${alumni.graduation_year}</td>
+          <td>${formatDate(alumni.registration_date)}</td>
+        </tr>
+      `).join('');
+    }
+
+    function updateStats() {
+      const total = alumniData.length;
+      const departments = [...new Set(alumniData.map(a => a.department))].length;
+      const colleges = [...new Set(alumniData.map(a => a.college))].length;
+      const avgYear = total > 0 ? 
+        Math.round(alumniData.reduce((sum, a) => sum + a.graduation_year, 0) / total) : 0;
+
+      document.getElementById('totalAlumni').textContent = total;
+      document.getElementById('totalDepartments').textContent = departments;
+      document.getElementById('totalColleges').textContent = colleges;
+      document.getElementById('avgGradYear').textContent = avgYear;
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return 'N/A';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'short', 
+        day: 'numeric' 
+      });
+    }
+
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+      const searchTerm = e.target.value.toLowerCase();
+      const filteredData = alumniData.filter(alumni => 
+        alumni.name.toLowerCase().includes(searchTerm) ||
+        alumni.email.toLowerCase().includes(searchTerm) ||
+        alumni.department.toLowerCase().includes(searchTerm) ||
+        alumni.college.toLowerCase().includes(searchTerm) ||
+        alumni.degree.toLowerCase().includes(searchTerm)
+      );
+      displayAlumniData(filteredData);
+    });
+
+    // Load data when page loads
+    window.addEventListener('load', loadAlumniData);
+  </script>
+</body>
+</html>

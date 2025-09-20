@@ -160,19 +160,19 @@
               </div>
               <div class="brand-text">
                 <div class="institution">PEC Alumni</div>
-                <div class="tagline">Verified Member • Class of 2016</div>
+                <div class="tagline">Verified Member • Class of {{ year }}</div>
               </div>
             </div>
-            <div class="meta" aria-hidden="true">Member since 2016</div>
+            <div class="meta" aria-hidden="true">Member since {{ since_year }}</div>
           </div>
 
           <div class="card-main">
             <div class="info">
-              <div class="name">Priya Sharma</div>
-              <div class="role">Senior Software Engineer</div>
-              <div class="company">Google</div>
+              <div class="name">{{ name }}</div>
+              <div class="role">{{ role }}</div>
+              <div class="company">{{ company }}</div>
 
-              <div class="meta" style="margin-top:10px;">Alumni ID: <strong style="color:#0b3d66">PEC-AL-2016-0923</strong></div>
+              <div class="meta" style="margin-top:10px;">Alumni ID: <strong style="color:#0b3d66">PEC-AL-{{year}}-{{random_numb}}</strong></div>
             </div>
 
             <div class="qr-area" aria-hidden="true">
@@ -184,7 +184,7 @@
       </div>
 
       <div class="card-details" aria-hidden="true">
-        <div><strong>priya.sharma@example.com</strong> • +91 98123 45678 • Gurugram, India</div>
+        <div><strong>{{email}}</strong> • +91 {{first_five_numb}} {{last_five_numb}} • {{ city }}</div>
       </div>
 
       <div class="profile-actions">
@@ -200,7 +200,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#181717"><path d="M12 2A10 10 0 002 12c0 4.42 2.87 8.17 6.84 9.5.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.63-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.1.39-1.99 1.03-2.69a3.6 3.6 0 01.1-2.64s.84-.27 2.75 1.02a9.58 9.58 0 015 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.4.1 2.64.64.7 1.03 1.6 1.03 2.69 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.72c0 .27.18.58.69.48A10 10 0 0022 12 10 10 0 0012 2z"/></svg>
           <span>Link with GitHub</span>
         </a>
-        <a href="homepage.html"><button class="action-btn logout">
+        <a href="{{ url_for('logout') }}"><button class="action-btn logout">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h6a1.5 1.5 0 001.5-1.5V15a.75.75 0 011.5 0v3.75a3 3 0 01-3 3h-6a3 3 0 01-3-3V5.25a3 3 0 013-3h6a3 3 0 013 3V9a.75.75 0 01-1.5 0V5.25a1.5 1.5 0 00-1.5-1.5h-6zm10.72 4.72a.75.75 0 011.06 0l3 3a.75.75 0 010 1.06l-3 3a.75.75 0 11-1.06-1.06l1.72-1.72H9a.75.75 0 010-1.5h10.94l-1.72-1.72a.75.75 0 010-1.06z" clip-rule="evenodd" /></svg>
           <span>Logout</span>
         </button></a>

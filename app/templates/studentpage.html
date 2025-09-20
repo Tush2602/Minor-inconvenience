@@ -285,7 +285,7 @@ groups.forEach(g => {
   `;
   // attach event after button is added
   d.querySelector('button').addEventListener('click', () => {
-    window.location.href = "fintech2.html";
+    window.location.href = "{{ url_for('fintech_stud') }}";
   });
   gg.appendChild(d);
 });
@@ -301,7 +301,7 @@ events.forEach(ev => {
     <button class="action-btn">View</button>
   `;
   div.querySelector('button').addEventListener('click', () => {
-    window.location.href = "fintech2.html";
+    window.location.href ="{{ url_for('fintech_stud') }}";
   });
   eg.appendChild(div);
 });
@@ -317,7 +317,7 @@ alumni.forEach(a => {
     <button class="action-btn">Request Mentorship</button>
   `;
   d.querySelector('button').addEventListener('click', () => {
-    window.location.href = "fintech2.html";
+    window.location.href = "{{ url_for('fintech_stud') }}";
   });
   mg.appendChild(d);
 });
@@ -332,7 +332,7 @@ function loadServices(tab){
   services[tab].forEach(s=>{
     const d=document.createElement('div');
     d.className='card';
-    d.innerHTML=`<h3>${s.title}</h3><p>${s.desc}</p><button class="action-btn">Apply</button>`;
+    d.innerHTML=`<h3>${s.title}</h3><p>${s.desc}</p><button class="action-btn">View</button>`;
     sg.appendChild(d);
   });
 }
