@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Alumni Nexus — Centralized Alumni Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1: #f4fbff;
+      --bg2: #e8f3ff;
+      --accent-1: #0b66ff;
+      --accent-2: #00bfa6;
+      --muted: #64748b;
+      --card: #ffffff;
+      --radius: 14px;
+      font-family: 'Poppins', system-ui, sans-serif;
+    }
+    html,body{
+      height:100%;
+      margin:0;
+      background: linear-gradient(120deg,var(--accent-1),var(--accent-2),#6a11cb);
+      background-size: 300% 300%;
+      animation: gradientBG 12s ease infinite;
+      color:#0f1724;
+    }
+    @keyframes gradientBG {
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+    
+    /* Main container for hero section */
+    .main-container {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:100vh;
+      padding:32px;
+    }
+    
+    .wrap{
+      width:100%;
+      max-width:1100px;
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:28px;
+      align-items:stretch;
+    }
+    .card{
+      background: rgba(255,255,255,0.9);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(10,20,40,0.15);
+      padding:28px;
+      position:relative;
+      backdrop-filter: blur(6px);
+    }
+    .hero { padding:20px 26px; }
+    .brand{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      margin-bottom:18px;
+    }
+    .logo-wrap{
+      width:80px;
+      height:80px;
+      flex-shrink:0;
+    }
+    .site-title{
+      font-size:22px;
+      font-weight:700;
+      letter-spacing:0.3px;
+    }
+    .site-sub{
+      font-size:13px;
+      color:var(--muted);
+      margin-top:4px;
+      font-weight:600;
+    }
+    h1{ font-size:28px; margin:6px 0 10px 0; line-height:1.12; }
+    p.lead{ color:var(--muted); margin:0 0 18px 0; font-size:15px; }
+    .features{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+      margin-top:12px;
+    }
+    .feature{
+      background: rgba(11,102,255,0.05);
+      border-radius:10px;
+      padding:10px 12px;
+      font-size:13px;
+      color:#08304a;
+    }
+    .cta-row{ margin-top:18px; display:flex; gap:12px; flex-wrap: wrap; }
+    .btn{
+      padding:12px 16px;
+      border-radius:10px;
+      font-weight:700;
+      cursor:pointer;
+      border:0;
+      background: linear-gradient(90deg,var(--accent-1), var(--accent-2));
+      color:white;
+      box-shadow: 0 6px 18px rgba(11,102,255,0.2);
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(11,102,255,0.3);
+    }
+    .btn.alt{ background:transparent; color:var(--accent-1); border:1px solid rgba(11,102,255,0.25); }
+    .auth{ display:flex; flex-direction:column; gap:14px; }
+    .auth h3{ margin:0; font-size:20px; }
+    .form{ display:flex; flex-direction:column; gap:10px; }
+    input{ padding:12px; border-radius:10px; border:1px solid #e6eef8; font-size:14px; }
+    input:focus{ border-color: var(--accent-1); outline:none; box-shadow:0 0 8px rgba(11,102,255,0.25); }
+    .small{ font-size:13px; color:var(--muted); }
+    .socials{ display:flex; gap:15px; justify-content:center; }
+    .social-btn{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      color: white;
+    }
+    .social-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    .social-btn.gmail {
+      background: linear-gradient(135deg, #ea4335, #fbbc04);
+    }
+    .social-btn.linkedin {
+      background: linear-gradient(135deg, #0077b5, #00a0dc);
+    }
+    .social-btn.github {
+      background: linear-gradient(135deg, #333, #24292e);
+    }
+    
+    /* Animated logo stroke */
+    .glow-circle {
+      stroke-dasharray: 314;
+      stroke-dashoffset: 314;
+      animation: dash 6s linear infinite;
+    }
+    @keyframes dash { to{stroke-dashoffset:0;} }
+
+    /* Flash messages styling */
+    .flash-messages {
+      grid-column: 1 / -1;
+      max-width: 1100px;
+      margin: 0.5rem 0;
+      font-family: 'Poppins', system-ui, sans-serif;
+      color: #0f1724;
+    }
+
+    .flash {
+      padding: 12px 16px;
+      margin-bottom: 10px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(6px);
+      box-shadow: 0 8px 24px rgba(10, 20, 40, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      font-size: 14px;
+      font-weight: 500;
+      animation: slideIn 0.5s ease-out;
+      transition: all 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .flash:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(10, 20, 40, 0.15);
+    }
+
+    .flash.success {
+      background: rgba(0, 191, 166, 0.1);
+      color: #0f1724;
+      border-left: 4px solid var(--accent-2);
+    }
+
+    .flash.error {
+      background: rgba(220, 53, 69, 0.1);
+      color: #0f1724;
+      border-left: 4px solid #dc3545;
+    }
+
+    .flash.info {
+      background: rgba(11, 102, 255, 0.1);
+      color: #0f1724;
+      border-left: 4px solid var(--accent-1);
+    }
+
+    .flash.warning {
+      background: rgba(255, 193, 7, 0.1);
+      color: #0f1724;
+      border-left: 4px solid #ffc107;
+    }
+
+    .flash-close {
+      background: none;
+      border: none;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--muted);
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+      padding: 0 8px;
+      margin-left: 12px;
+    }
+
+    .flash-close:hover {
+      opacity: 1;
+    }
+
+    /* Reviews Section */
+    .reviews-section {
+      background: var(--bg1);
+      padding: 80px 32px;
+      position: relative;
+    }
+
+    .reviews-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .reviews-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .reviews-header h2 {
+      margin: 0;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #0f1724;
+      margin-bottom: 12px;
+    }
+
+    .reviews-header p {
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 25px;
+      margin-bottom: 40px;
+    }
+
+    .review-card {
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 10px 30px rgba(10, 20, 40, 0.1);
+      border: 1px solid rgba(11, 102, 255, 0.1);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(6px);
+    }
+
+    .review-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(10, 20, 40, 0.15);
+    }
+
+    .review-card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--accent-1);
+      background: linear-gradient(135deg, rgba(11, 102, 255, 0.1), rgba(0, 191, 166, 0.1));
+      border: 1px solid rgba(11, 102, 255, 0.2);
+      flex-shrink: 0;
+    }
+
+    .review-card strong {
+      color: #0f1724;
+      font-weight: 600;
+    }
+
+    .role {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .stars {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 12px;
+    }
+
+    .stars svg {
+      width: 18px;
+      height: 18px;
+      fill: #f59e0b;
+    }
+
+    .review-card p {
+      color: #475569;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0 0 14px;
+    }
+
+    .date {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .reviews-cta {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .cta-btn {
+      background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 18px rgba(11, 102, 255, 0.25);
+    }
+
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(11, 102, 255, 0.3);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .wrap {
+        grid-template-columns: 1fr;
+        max-width: 600px;
+      }
+      
+      .main-container {
+        padding: 20px;
+      }
+      
+      .review-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+      }
+      
+      .reviews-section {
+        padding: 60px 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .cta-row {
+        flex-direction: column;
+      }
+      
+      .btn {
+        text-align: center;
+        width: 100%;
+      }
+      
+      .features {
+        grid-template-columns: 1fr;
+      }
+      
+      .review-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      
+      .reviews-header h2 {
+        font-size: 1.8rem;
+      }
+      
+      .reviews-section {
+        padding: 50px 16px;
+      }
+      
+      .socials {
+        justify-content: center;
+      }
+      
+      .flash {
+        font-size: 13px;
+        padding: 10px 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .main-container {
+        padding: 16px;
+      }
+      
+      .card {
+        padding: 20px;
+      }
+      
+      .hero {
+        padding: 16px 20px;
+      }
+      
+      .brand {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+      }
+      
+      .logo-wrap {
+        width: 60px;
+        height: 60px;
+      }
+      
+      .site-title {
+        font-size: 20px;
+      }
+      
+      h1 {
+        font-size: 24px;
+      }
+      
+      .review-card {
+        padding: 18px;
+      }
+      
+      .reviews-header h2 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <div class="main-container">
+    <div class="wrap">
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-messages">
+            {% for category, message in messages %}
+              <div class="flash {{ category }}">
+                <span>{{ message }}</span>
+                <button class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <!-- Left / Hero -->
+      <section class="card hero">
+        <div class="brand">
+          <!-- Creative circular animated logo -->
+          <div class="logo-wrap">
+            <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="grad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#0b66ff"/>
+                  <stop offset="50%" stop-color="#6a11cb"/>
+                  <stop offset="100%" stop-color="#00bfa6"/>
+                </linearGradient>
+              </defs>
+              <circle cx="60" cy="60" r="50" fill="none" stroke="url(#grad)" stroke-width="4" class="glow-circle"/>
+              <circle cx="60" cy="25" r="6" fill="url(#grad)"/>
+              <circle cx="95" cy="60" r="6" fill="url(#grad)"/>
+              <circle cx="60" cy="95" r="6" fill="url(#grad)"/>
+              <circle cx="25" cy="60" r="6" fill="url(#grad)"/>
+              <circle cx="60" cy="60" r="16" fill="url(#grad)" />
+            </svg>
+          </div>
+          <div>
+            <div class="site-title">Alumni Nexus</div>
+            <div class="site-sub">Centralized Alumni Data Management & Engagement</div>
+          </div>
+        </div>
+
+        <h1>Bring your alumni network together</h1>
+        <p class="lead">A single platform to connect graduates, institutions, and opportunities.</p>
+        <div class="features">
+          <div class="feature">Unified Alumni Profiles</div>
+          <div class="feature">Event & Mentorship</div>
+          <div class="feature">Secure Access</div>
+          <div class="feature">Smart Analytics</div>
+        </div>
+      </section>
+
+      <!-- Right / Login -->
+      <aside class="card auth">
+        <h3>Member Login</h3>
+        <form class="form" action="index.html">
+          <!-- Status Buttons Section -->
+          <div>
+            <h4>Status</h4>
+            <div class="cta-row">
+              <a href="{{ url_for('login_student') }}" class="btn">Student</a>
+              <a href="{{ url_for('login_college') }}" class="btn">College</a>
+              <a href="{{ url_for('login_alumni') }}" class="btn">Alumni</a>
+            </div>
+          </div>
+        </form>
+
+        <div class="small">Don't have an account? <a href="{{ url_for('register') }}">Register</a></div>
+        <div class="socials">
+          <button class="social-btn gmail">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-.887.711-1.618 1.590-1.618L12 11.383l10.41-7.544A1.636 1.636 0 0 1 24 5.457z"/>
+            </svg>
+          </button>
+          <button class="social-btn linkedin">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+          </button>
+          <button class="social-btn github">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+            </svg>
+          </button>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Reviews Section -->
+  <section class="reviews-section">
+    <div class="reviews-container">
+      <!-- Section Header -->
+      <div class="reviews-header">
+        <h2>What Students & Alumni Say</h2>
+        <p>Trusted voices from our community — real impact, real experiences.</p>
+      </div>
+
+      <!-- Review Grid -->
+      <div class="review-grid">
+        
+        <!-- Review Card 1 -->
+        <article class="review-card">
+          <div class="review-card-header">
+            <div class="avatar">RS</div>
+            <div>
+              <strong>Rohit Sharma</strong>
+              <div class="role">Alum • Software Engineer @ Microsoft</div>
+            </div>
+          </div>
+          <div class="stars">
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+          </div>
+          <p>"Alumni Nexus made reconnecting effortless. The digital QR card is genius, and the Give-Back hub helped me mentor students and find talented interns for my team easily."</p>
+          <span class="date">Sep 15, 2025 • Verified Member</span>
+        </article>
+
+        <!-- Review Card 2 -->
+        <article class="review-card">
+          <div class="review-card-header">
+            <div class="avatar">PS</div>
+            <div>
+              <strong>Pooja Singh</strong>
+              <div class="role">Student • MBA (Final Year)</div>
+            </div>
+          </div>
+          <div class="stars">
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24" style="fill: #d1d5db;"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+          </div>
+          <p>"The mentorship matching is incredible. It connected me with a senior alum in brand marketing, which led to a warm referral and helped me land a summer internship at a top agency."</p>
+          <span class="date">Aug 30, 2025 • Verified Member</span>
+        </article>
+
+        <!-- Review Card 3 -->
+        <article class="review-card">
+          <div class="review-card-header">
+            <div class="avatar">AK</div>
+            <div>
+              <strong>Aishwarya Kapoor</strong>
+              <div class="role">Alum • Data Scientist @ Spotify</div>
+            </div>
+          </div>
+          <div class="stars">
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+          </div>
+          <p>"I absolutely love the Legacy Tree feature. Seeing the diverse career paths of other alumni gave me the confidence and ideas I needed to pivot into product analytics. The UI is clean and fast."</p>
+          <span class="date">Sep 10, 2025 • Verified Member</span>
+        </article>
+
+        <!-- Review Card 4 -->
+        <article class="review-card">
+          <div class="review-card-header">
+            <div class="avatar">RD</div>
+            <div>
+              <strong>Ritika Desai</strong>
+              <div class="role">Student • B.Des (2nd Year)</div>
+            </div>
+          </div>
+          <div class="stars">
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+          </div>
+          <p>"The Groups & Cohorts feature is wonderful. I joined the 'Design Thinkers' circle and got to collaborate on a live design brief with an alum who is now my mentor. Invaluable experience!"</p>
+          <span class="date">Jul 22, 2025 • Verified Member</span>
+        </article>
+
+        <!-- Review Card 5 -->
+        <article class="review-card">
+          <div class="review-card-header">
+            <div class="avatar">PV</div>
+            <div>
+              <strong>Priya Verma</strong>
+              <div class="role">Alum • UX Lead @ Swiggy</div>
+            </div>
+          </div>
+          <div class="stars">
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+          </div>
+          <p>"As an alum living in Singapore, the 'Find Alumni Near Me' feature has been fantastic for professional networking. I've connected with three other alumni in my city for coffee."</p>
+          <span class="date">Sep 05, 2025 • Verified Member</span>
+        </article>
+
+        <!-- Review Card 6 -->
+        <article class="review-card">
+          <div class="review-card-header">
+            <div class="avatar">SK</div>
+            <div>
+              <strong>Sameer Khan</strong>
+              <div class="role">Student • ECE (3rd Year)</div>
+            </div>
+          </div>
+          <div class="stars">
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+            <svg viewBox="0 0 24 24" style="fill: #d1d5db;"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+          </div>
+          <p>"I found a collaborator for my final year project through the 'Tech Entrepreneurs' group. We're now building a prototype with guidance from an alum mentor we met on the platform."</p>
+          <span class="date">Aug 18, 2025 • Verified Member</span>
+        </article>
+
+      </div>
+
+      <!-- CTA -->
+      <div class="reviews-cta">
+        <button class="cta-btn" onclick="handleAddFeedback()">Add Your Feedback</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // Handle flash message close functionality
+    document.addEventListener('DOMContentLoaded', () => {
+      // Auto-remove flash messages after 6 seconds
+      document.querySelectorAll('.flash').forEach(flash => {
+        setTimeout(() => {
+          if (flash.parentElement) {
+            flash.style.opacity = '0';
+            flash.style.transform = 'translateY(-10px)';
+            setTimeout(() => flash.remove(), 300);
+          }
+        }, 6000);
+      });
+    });
+
+    // Handle Add Feedback button click
+    function handleAddFeedback() {
+      // Check if user is logged in (you can modify this condition based on your Flask session logic)
+      // For now, we'll assume user is not logged in and show the login prompt
+      showLoginPrompt();
+    }
+
+    function showLoginPrompt() {
+      // Create flash message for login requirement
+      const flashContainer = document.querySelector('.flash-messages') || createFlashContainer();
+      
+      const flashMessage = document.createElement('div');
+      flashMessage.className = 'flash info';
+      flashMessage.innerHTML = `
+        <span>Please login first to add your feedback and share your experience with our community.</span>
+        <button class="flash-close" onclick="this.parentElement.remove()">&times;</button>
+      `;
+      
+      flashContainer.appendChild(flashMessage);
+      
+      // Smooth scroll to top to show the message
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+      
+      // Auto-remove after 6 seconds
+      setTimeout(() => {
+        if (flashMessage.parentElement) {
+          flashMessage.style.opacity = '0';
+          flashMessage.style.transform = 'translateY(-10px)';
+          setTimeout(() => flashMessage.remove(), 300);
+        }
+      }, 6000);
+    }
+
+    function createFlashContainer() {
+      const container = document.createElement('div');
+      container.className = 'flash-messages';
+      
+      // Insert at the beginning of the wrap container
+      const wrap = document.querySelector('.wrap');
+      wrap.insertBefore(container, wrap.firstChild);
+      
+      return container;
+    }
+  </script>
+</body>
+</html>
