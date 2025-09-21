@@ -1,251 +1,4 @@
-<script>
-    // Global variables to store original alumni data
-    let allAlumniCards = [];
-    let currentSearchTerm = '';
-    let displayedCount = 37; // Show all initially since we have 37 cards
-    const initialLoadCount = 12;
-    const loadMoreCount = 8;
-
-    // Initialize the application
-    document.addEventListener('DOMContentLoaded', function() {
-      // Store all alumni cards for filtering/sorting
-      allAlumniCards = Array.from(document.querySelectorAll('.alumni-card'));
-      
-      // Set up initial pagination - show first 12 cards
-      showInitialCards();
-      updateCountDisplay();
-    });
-
-    // Show initial set of cards
-    function showInitialCards() {
-      allAlumniCards.forEach((card, index) => {
-        if (index < initialLoadCount) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
-      });
-      displayedCount = Math.min(initialLoadCount, allAlumniCards.length);
-      
-      // Show load more button if there are more cards
-      const loadMoreBtn = document.getElementById('loadMoreBtn');
-      if (allAlumniCards.length > initialLoadCount) {
-        loadMoreBtn.style.display = 'inline-block';
-      }
-    }
-
-    // Load more alumni function
-    function loadMoreAlumni() {
-      const hiddenCards = allAlumniCards.filter(card => card.style.display === 'none');
-      const cardsToShow = hiddenCards.slice(0, loadMoreCount);
-      
-      cardsToShow.forEach(card => {
-        card.style.display = 'block';
-      });
-      
-      displayedCount += cardsToShow.length;
-      updateCountDisplay();
-      
-      // Hide load more button if all cards are shown
-      if (displayedCount >= allAlumniCards.length) {
-        document.getElementById('loadMoreBtn').style.display = 'none';
-      }
-    }
-
-    // Update count display
-    function updateCountDisplay() {
-      document.getElementById('currentCount').textContent = displayedCount;
-      document.getElementById('totalAlumni').textContent = allAlumniCards.length;
-    }
-
-    // Function to filter alumni based on search input
-    function filterAlumni() {
-      currentSearchTerm = document.getElementById('searchInput').value.toLowerCase();
-      const alumniGrid = document.getElementById('alumniGrid');
-      const searchResults = document.getElementById('searchResults');
-      const noResults = document.getElementById('noResults');
-      const resultsCount = document.getElementById('resultsCount');
-      const loadMoreBtn = document.getElementById('loadMoreBtn');
-      
-      let visibleCount = 0;
-
-      allAlumniCards.forEach(card => {
-        const name = card.getAttribute('data-name').toLowerCase();
-        const role = card.getAttribute('data-role').toLowerCase();
-        const company = card.getAttribute('data-company').toLowerCase();
-        
-        const matchesSearch = currentSearchTerm === '' || 
-                            name.includes(currentSearchTerm) || 
-                            role.includes(currentSearchTerm) || 
-                            company.includes(currentSearchTerm);
-
-        if (matchesSearch) {
-          card.style.display = 'block';
-          visibleCount++;
-        } else {
-          card.style.display = 'none';
-        }
-      });
-
-      // Update search results display
-      if (currentSearchTerm === '') {
-        searchResults.style.display = 'none';
-        noResults.style.display = 'none';
-        // Reset to initial pagination
-        showInitialCards();
-      } else {
-        searchResults.style.display = 'block';
-        loadMoreBtn.style.display = 'none'; // Hide load more when searching
-        
-        if (visibleCount > 0) {
-          resultsCount.textContent = `Found ${visibleCount} alumni matching "${currentSearchTerm}"`;
-          noResults.style.display = 'none';
-        } else {
-          resultsCount.textContent = `No results found for "${currentSearchTerm}"`;
-          noResults.style.display = 'block';
-        }
-        
-        // Update count for search results
-        displayedCount = visibleCount;
-        updateCountDisplay();
-      }
-
-      // Re-apply current sort after filtering
-      const sortSelect = document.getElementById('sortSelect');
-      if (sortSelect.value !== 'name') {
-        sortAlumni();
-      }
-    }
-
-    // Function to sort alumni based on selected criteria
-    function sortAlumni() {
-      const sortValue = document.getElementById('sortSelect').value;
-      const alumniGrid = document.getElementById('alumniGrid');
-      
-      // Get only visible cards for sorting
-      const visibleCards = allAlumniCards.filter(card => card.style.display !== 'none');
-      
-      visibleCards.sort((a, b) => {
-        switch(sortValue) {
-          case 'name':
-            return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name'));
-          
-          case 'graduation':
-            return parseInt(b.getAttribute('data-graduation')) - parseInt(a.getAttribute('data-graduation'));
-          
-          case 'experience':
-            return parseInt(b.getAttribute('data-experience')) - parseInt(a.getAttribute('data-experience'));
-          
-          case 'company':
-            return a.getAttribute('data-company').localeCompare(b.getAttribute('data-company'));
-          
-          default:
-            return 0;
-        }
-      });
-
-      // Clear the grid and append sorted cards
-      alumniGrid.innerHTML = '';
-      visibleCards.forEach(card => alumniGrid.appendChild(card));
-      
-      // Also append hidden cards back to maintain the DOM structure
-      allAlumniCards.filter(card => card.style.display === 'none').forEach(card => {
-        alumniGrid.appendChild(card);
-      });
-    }
-
-  // Function to handle profile viewing
-  function viewAlumniProfile() {
-    // Redirect using the URL generated by Flask's url_for
-    window.location.href = "{{ url_for('alumni_card') }}";
-  }
-
-
-    // Enhanced action button functionality
-    document.querySelectorAll('.action-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        const originalText = btn.dataset.originalText || btn.textContent;
-        if (!btn.dataset.originalText) {
-          btn.dataset.originalText = originalText;
-        }
-
-        if (btn.classList.contains('joined')) {
-          btn.classList.remove('joined');
-          btn.textContent = originalText;
-          
-          // Add a subtle animation
-          btn.style.transform = 'scale(0.95)';
-          setTimeout(() => {
-            btn.style.transform = '';
-          }, 150);
-        } else {
-          btn.classList.add('joined');
-          
-          // Dynamic text based on action
-          if (originalText.toLowerCase() === 'view') btn.textContent = 'Joined';
-          else if (originalText.toLowerCase().includes('request')) btn.textContent = 'Requested';
-          else if (originalText.toLowerCase().includes('contribute')) btn.textContent = 'Contributed';
-          else if (originalText.toLowerCase().includes('register')) btn.textContent = 'Registered';
-          else if (originalText.toLowerCase().includes('explore')) btn.textContent = 'Exploring...';
-          else if (originalText.toLowerCase().includes('load more')) return; // Don't change load more button
-          else btn.textContent = 'Joined';
-          
-          // Add a subtle animation
-          btn.style.transform = 'scale(1.05)';
-          setTimeout(() => {
-            btn.style.transform = '';
-          }, 150);
-        }
-      });
-    });
-
-    // Add smooth scrolling for navigation links
-    document.querySelectorAll('nav a[href^="#"]').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const target = document.querySelector(link.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      });
-    });
-
-    // Add keyboard support for search
-    document.getElementById('searchInput').addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        e.target.value = '';
-        filterAlumni();
-        e.target.blur();
-      }
-    });
-
-    // Add search filters for quick filtering
-    function quickFilter(criteria) {
-      const searchInput = document.getElementById('searchInput');
-      searchInput.value = criteria;
-      filterAlumni();
-    }
-
-    // Add company-specific filters
-    function filterByCompany(company) {
-      quickFilter(company);
-    }
-
-    // Add role-specific filters  
-    function filterByRole(role) {
-      quickFilter(role);
-    }
-
-    // Add graduation year filters
-    function filterByYear(year) {
-      quickFilter(year);
-    }
-  </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -547,6 +300,8 @@
     <div class="search-bar">
       <input type="text" id="searchInput" placeholder="Search by name, role, or company..." oninput="filterAlumni()">
       <select id="sortSelect" onchange="sortAlumni()">
+        <option value="" disabled selected>Sort by...</option>
+        <option value="original">Original Order</option>
         <option value="name">Sort by Name</option>
         <option value="graduation">Sort by Graduation Year</option>
         <option value="experience">Sort by Experience</option>
@@ -636,13 +391,13 @@
         <p>Class of 2016</p>
         <span class="badge">8 years experience</span>
       </div>
-      <div class="card alumni-card" data-name="Tushar Joshi" data-role="Data Scientist" data-company="Netflix" data-graduation="2022" data-experience="3">
+      <div class="card alumni-card" data-name="Tushar Joshi" data-role="Data Scientist" data-company="Netflix" data-graduation="2018" data-experience="6">
         <div class="alumni-avatar">TJ</div>
         <h3>Tushar Joshi</h3>
         <p>Data Scientist</p>
         <p><strong>Netflix</strong></p>
         <p>Class of 2018</p>
-        <span class="badge">3 years experience</span>
+        <span class="badge">6 years experience</span>
       </div>
       <div class="card alumni-card" data-name="Kavya Reddy" data-role="Cloud Architect" data-company="AWS" data-graduation="2015" data-experience="9">
         <div class="alumni-avatar">KR</div>
@@ -669,13 +424,13 @@
         <span class="badge">7 years experience</span>
       </div>
 
-      <div class="card alumni-card" data-name="Suyash Kansal" data-role="Project Lead" data-company="Google" data-graduation="2022" data-experience="3">
+      <div class="card alumni-card" data-name="Suyash Kansal" data-role="Project Lead" data-company="Google" data-graduation="2018" data-experience="6">
         <div class="alumni-avatar">SK</div>
         <h3>Suyash Kansal</h3>
         <p>Project Lead</p>
         <p><strong>Google</strong></p>
         <p>Class of 2018</p>
-        <span class="badge">3 years experience</span>
+        <span class="badge">6 years experience</span>
       </div>
 
       <!-- Entrepreneurs & Founders -->
@@ -740,13 +495,13 @@
         <span class="badge">8 years experience</span>
       </div>
 
-      <div class="card alumni-card" data-name="Bhavya Gupta" data-role="Full Stack Developer" data-company="Meta" data-graduation="2022" data-experience="3">
+      <div class="card alumni-card" data-name="Bhavya Gupta" data-role="Full Stack Developer" data-company="Meta" data-graduation="2018" data-experience="6">
         <div class="alumni-avatar">BG</div>
         <h3>Bhavya Gupta</h3>
         <p>Full Stack Engineer</p>
         <p><strong>Meta</strong></p>
         <p>Class of 2018</p>
-        <span class="badge">3 years experience</span>
+        <span class="badge">6 years experience</span>
       </div>
       <div class="card alumni-card" data-name="Vivek Yadav" data-role="Electrical Engineer" data-company="Siemens" data-graduation="2017" data-experience="7">
         <div class="alumni-avatar">VY</div>
@@ -810,13 +565,13 @@
         <p>Class of 2011</p>
         <span class="badge">13 years experience</span>
       </div>
-      <div class="card alumni-card" data-name="Disha Bindra" data-role="Backend Engineer" data-company="Amazon" data-graduation="2022" data-experience="3">
+      <div class="card alumni-card" data-name="Disha Bindra" data-role="Backend Engineer" data-company="Amazon" data-graduation="2018" data-experience="6">
         <div class="alumni-avatar">DB</div>
         <h3>Disha Bindra</h3>
         <p>Backend Engineer</p>
         <p><strong>Amazon</strong></p>
         <p>Class of 2018</p>
-        <span class="badge">3 years experience</span>
+        <span class="badge">6 years experience</span>
       </div>
       <div class="card alumni-card" data-name="Swati Khanna" data-role="Policy Analyst" data-company="NITI Aayog" data-graduation="2017" data-experience="7">
         <div class="alumni-avatar">SK</div>
@@ -845,13 +600,13 @@
         <span class="badge">4 years experience</span>
       </div>
 
-      <div class="card alumni-card" data-name="Saurabh Thakur" data-role="Data Engineer" data-company="Netflix" data-graduation="2022" data-experience="3">
+      <div class="card alumni-card" data-name="Saurabh Thakur" data-role="Data Engineer" data-company="Netflix" data-graduation="2018" data-experience="6">
         <div class="alumni-avatar">ST</div>
         <h3>Saurabh Thakur</h3>
         <p>Data Engineer</p>
         <p><strong>Netflix</strong></p>
         <p>Class of 2018</p>
-        <span class="badge">3 years experience</span>
+        <span class="badge">6 years experience</span>
       </div>
 
       <!-- More Recent Graduates -->
@@ -880,7 +635,7 @@
         <span class="badge">3 years experience</span>
       </div>
       <div class="card alumni-card" data-name="Tanvi Gupta" data-role="Product Designer" data-company="Swiggy" data-graduation="2022" data-experience="2">
-        <div class="alumni-avatar">TJ</div>
+        <div class="alumni-avatar">TG</div>
         <h3>Tanvi Gupta</h3>
         <p>Product Designer</p>
         <p><strong>Swiggy</strong></p>
@@ -897,13 +652,13 @@
         <p>Class of 2012</p>
         <span class="badge">12 years experience</span>
       </div>
-      <div class="card alumni-card" data-name="Jaskeerat Singh" data-role="Frontend Engineer" data-company="Netflix" data-graduation="2022" data-experience="3">
+      <div class="card alumni-card" data-name="Jaskeerat Singh" data-role="Frontend Engineer" data-company="Netflix" data-graduation="2018" data-experience="6">
         <div class="alumni-avatar">JS</div>
         <h3>Jaskeerat Singh</h3>
         <p>Frontend Engineer</p>
         <p><strong>Netflix</strong></p>
         <p>Class of 2018</p>
-        <span class="badge">3 years experience</span>
+        <span class="badge">6 years experience</span>
       </div>
       <div class="card alumni-card" data-name="Shreya Kapoor" data-role="Senior Engineer" data-company="Uber" data-graduation="2016" data-experience="8">
         <div class="alumni-avatar">SK</div>
@@ -937,7 +692,7 @@
         Load More Alumni
       </button>
       <p id="totalCount" style="color: var(--muted-color); margin-top: 15px;">
-        Showing <span id="currentCount">37</span> of <span id="totalAlumni">37</span> alumni
+        Showing <span id="currentCount">43</span> of <span id="totalAlumni">43</span> alumni
       </p>
     </div>
 
@@ -953,8 +708,7 @@
     <h2>Cohorts & Groups</h2>
     <p>Connect with like-minded alumni in your areas of interest and collaborate on exciting projects.</p>
     <div class="grid-container">
-      <div class="card"><h3>Fintech Innovators</h3><p>Exploring the future of financial technology and blockchain.</p><a href="{{ url_for('fintech_alum') }}"><button class="action-btn">View</button></a></div>
-      <div class="card"><h3>Tech Entrepreneurs</h3><p>A hub for founders, innovators, and those building the next unicorn startups.</p><button class="action-btn">View</button></div>
+      <div class="card"><h3>Fintech Innovators</h3><p>Exploring the future of financial technology and blockchain.</p><button class="action-btn" onclick="window.location.href='{{ url_for('fintech_alum') }}'">View</button></div>      <div class="card"><h3>Tech Entrepreneurs</h3><p>A hub for founders, innovators, and those building the next unicorn startups.</p><button class="action-btn">View</button></div>
       <div class="card"><h3>Open Source Contributors</h3><p>Collaborate on impactful open-source projects and contribute globally.</p><button class="action-btn">View</button></div>
       <div class="card"><h3>Global Alumni Network</h3><p>Connecting PEC alumni across the globe for networking and support.</p><button class="action-btn">View</button></div>
       <div class="card"><h3>Women in Tech</h3><p>A community dedicated to empowering and supporting women in technology.</p><button class="action-btn">View</button></div>
@@ -1020,13 +774,67 @@
   <script>
     // Global variables to store original alumni data
     let allAlumniCards = [];
+    let originalAlumniOrder = [];
     let currentSearchTerm = '';
+    let displayedCount = 43; // Show all initially since we have 43 cards
+    const initialLoadCount = 12;
+    const loadMoreCount = 8;
 
     // Initialize the application
     document.addEventListener('DOMContentLoaded', function() {
       // Store all alumni cards for filtering/sorting
       allAlumniCards = Array.from(document.querySelectorAll('.alumni-card'));
+      // Store original order for reset
+      originalAlumniOrder = [...allAlumniCards];
+      
+      // Set up initial pagination - show first 12 cards
+      showInitialCards();
+      updateCountDisplay();
     });
+
+    // Show initial set of cards
+    function showInitialCards() {
+      allAlumniCards.forEach((card, index) => {
+        if (index < initialLoadCount) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      displayedCount = Math.min(initialLoadCount, allAlumniCards.length);
+      
+      // Show load more button if there are more cards
+      const loadMoreBtn = document.getElementById('loadMoreBtn');
+      if (allAlumniCards.length > initialLoadCount) {
+        loadMoreBtn.style.display = 'inline-block';
+      }
+    }
+
+    // Load more alumni function
+    function loadMoreAlumni() {
+      // Get the current order of cards in the DOM (might be sorted)
+      const currentCards = Array.from(document.querySelectorAll('.alumni-card'));
+      const hiddenCards = currentCards.filter(card => card.style.display === 'none');
+      const cardsToShow = hiddenCards.slice(0, loadMoreCount);
+      
+      cardsToShow.forEach(card => {
+        card.style.display = 'block';
+      });
+      
+      displayedCount += cardsToShow.length;
+      updateCountDisplay();
+      
+      // Hide load more button if all cards are shown
+      if (displayedCount >= allAlumniCards.length) {
+        document.getElementById('loadMoreBtn').style.display = 'none';
+      }
+    }
+
+    // Update count display
+    function updateCountDisplay() {
+      document.getElementById('currentCount').textContent = displayedCount;
+      document.getElementById('totalAlumni').textContent = allAlumniCards.length;
+    }
 
     // Function to filter alumni based on search input
     function filterAlumni() {
@@ -1035,10 +843,14 @@
       const searchResults = document.getElementById('searchResults');
       const noResults = document.getElementById('noResults');
       const resultsCount = document.getElementById('resultsCount');
+      const loadMoreBtn = document.getElementById('loadMoreBtn');
       
       let visibleCount = 0;
 
-      allAlumniCards.forEach(card => {
+      // Get current cards from DOM (maintains sort order)
+      const currentCards = Array.from(document.querySelectorAll('.alumni-card'));
+      
+      currentCards.forEach(card => {
         const name = card.getAttribute('data-name').toLowerCase();
         const role = card.getAttribute('data-role').toLowerCase();
         const company = card.getAttribute('data-company').toLowerCase();
@@ -1060,8 +872,12 @@
       if (currentSearchTerm === '') {
         searchResults.style.display = 'none';
         noResults.style.display = 'none';
+        // Reset to initial pagination
+        showInitialCards();
       } else {
         searchResults.style.display = 'block';
+        loadMoreBtn.style.display = 'none'; // Hide load more when searching
+        
         if (visibleCount > 0) {
           resultsCount.textContent = `Found ${visibleCount} alumni matching "${currentSearchTerm}"`;
           noResults.style.display = 'none';
@@ -1069,12 +885,10 @@
           resultsCount.textContent = `No results found for "${currentSearchTerm}"`;
           noResults.style.display = 'block';
         }
-      }
-
-      // Re-apply current sort after filtering
-      const sortSelect = document.getElementById('sortSelect');
-      if (sortSelect.value !== 'name') {
-        sortAlumni();
+        
+        // Update count for search results
+        displayedCount = visibleCount;
+        updateCountDisplay();
       }
     }
 
@@ -1082,46 +896,79 @@
     function sortAlumni() {
       const sortValue = document.getElementById('sortSelect').value;
       const alumniGrid = document.getElementById('alumniGrid');
+      const loadMoreBtn = document.getElementById('loadMoreBtn');
       
-      // Get only visible cards for sorting
-      const visibleCards = allAlumniCards.filter(card => card.style.display !== 'none');
+      // If no sort value selected (placeholder), return early
+      if (!sortValue) return;
       
-      visibleCards.sort((a, b) => {
-        switch(sortValue) {
-          case 'name':
-            return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name'));
-          
-          case 'graduation':
-            return parseInt(b.getAttribute('data-graduation')) - parseInt(a.getAttribute('data-graduation'));
-          
-          case 'experience':
-            return parseInt(b.getAttribute('data-experience')) - parseInt(a.getAttribute('data-experience'));
-          
-          case 'company':
-            return a.getAttribute('data-company').localeCompare(b.getAttribute('data-company'));
-          
-          default:
-            return 0;
-        }
-      });
+      let allCards;
+      
+      // Handle original order reset
+      if (sortValue === 'original') {
+        allCards = [...originalAlumniOrder];
+      } else {
+        // Work with ALL current cards for sorting
+        allCards = Array.from(document.querySelectorAll('.alumni-card'));
+        
+        // Sort all cards
+        allCards.sort((a, b) => {
+          switch(sortValue) {
+            case 'name':
+              return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name'));
+            
+            case 'graduation':
+              const yearA = parseInt(a.getAttribute('data-graduation'));
+              const yearB = parseInt(b.getAttribute('data-graduation'));
+              return yearB - yearA;
+            
+            case 'experience':
+              const expA = parseInt(a.getAttribute('data-experience'));
+              const expB = parseInt(b.getAttribute('data-experience'));
+              return expB - expA;
+            
+            case 'company':
+              return a.getAttribute('data-company').localeCompare(b.getAttribute('data-company'));
+            
+            default:
+              return 0;
+          }
+        });
+      }
 
       // Clear the grid and append sorted cards
       alumniGrid.innerHTML = '';
-      visibleCards.forEach(card => alumniGrid.appendChild(card));
+      allCards.forEach(card => alumniGrid.appendChild(card));
       
-      // Also append hidden cards back to maintain the DOM structure
-      allAlumniCards.filter(card => card.style.display === 'none').forEach(card => {
-        alumniGrid.appendChild(card);
-      });
+      // Update the global reference to maintain sorted order
+      allAlumniCards = allCards;
+      
+      // If we're not searching, apply current pagination to the sorted results
+      if (currentSearchTerm === '') {
+        // Apply current pagination state to sorted cards
+        allCards.forEach((card, index) => {
+          if (index < displayedCount) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+        
+        // Show load more button if needed
+        if (displayedCount < allCards.length) {
+          loadMoreBtn.style.display = 'inline-block';
+        } else {
+          loadMoreBtn.style.display = 'none';
+        }
+      } else {
+        // If searching, apply search filter to sorted results
+        filterAlumni();
+      }
     }
 
-    // Function to handle profile viewing (placeholder)
+    // Function to handle profile viewing
     function viewAlumniProfile() {
-      // This would typically redirect to the alumni profile page
-      // For now, we'll just show an alert
-      alert('Redirecting to your alumni profile...');
-      // In your Flask app, this should redirect to the alumni card route
-      // window.location.href = '/alumni-card';
+      // Redirect using the URL generated by Flask's url_for
+      window.location.href = "{{ url_for('alumni_card') }}";
     }
 
     // Enhanced action button functionality
@@ -1152,6 +999,7 @@
           else if (originalText.toLowerCase().includes('contribute')) btn.textContent = 'Contributed';
           else if (originalText.toLowerCase().includes('register')) btn.textContent = 'Registered';
           else if (originalText.toLowerCase().includes('explore')) btn.textContent = 'Exploring...';
+          else if (originalText.toLowerCase().includes('load more')) return; // Don't change load more button
           else btn.textContent = 'Joined';
           
           // Add a subtle animation
@@ -1185,6 +1033,28 @@
         e.target.blur();
       }
     });
+
+    // Add search filters for quick filtering
+    function quickFilter(criteria) {
+      const searchInput = document.getElementById('searchInput');
+      searchInput.value = criteria;
+      filterAlumni();
+    }
+
+    // Add company-specific filters
+    function filterByCompany(company) {
+      quickFilter(company);
+    }
+
+    // Add role-specific filters  
+    function filterByRole(role) {
+      quickFilter(role);
+    }
+
+    // Add graduation year filters
+    function filterByYear(year) {
+      quickFilter(year);
+    }
   </script>
 
 </body>

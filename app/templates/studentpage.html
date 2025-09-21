@@ -13,6 +13,8 @@
   --accent-2: #83e3ff;
   --heading: #0b3d66;
   --muted: #6b7280;
+  --success: #10b981;
+  --warning: #f59e0b;
 }
 body{
   margin:0;
@@ -107,7 +109,7 @@ p.section-intro{text-align:center;color:var(--muted);max-width:700px;margin:0 au
   color:#fff;
   font-weight:600;
   cursor:pointer;
-  transition: transform .2s ease, box-shadow .2s ease;
+  transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
   box-shadow: 0 4px 12px rgba(106, 167, 255, 0.25);
 }
 .action-btn:hover, .tab-btn:hover {
@@ -117,24 +119,42 @@ p.section-intro{text-align:center;color:var(--muted);max-width:700px;margin:0 au
 .action-btn{ margin-top:12px; padding:10px 20px; border-radius: 10px; }
 .tab-btn{ padding:8px 18px; border-radius: 20px; }
 .action-btn.joined{background:var(--heading)!important;}
+.action-btn.connected{background:var(--success)!important;}
 .tab-btn.active{background:var(--heading);}
 
 .top-search{
   display:flex;
   justify-content:center;
   padding:20px;
+  gap:10px;
+  flex-wrap:wrap;
 }
 .top-search input{
-  padding:10px 16px;
+  padding:12px 16px;
   border:1px solid rgba(130,200,255,0.22);
   border-radius:10px;width:320px;
   box-shadow: 0 10px 30px rgba(30,90,140,0.06);
   transition: box-shadow .2s ease, border-color .2s ease;
+  font-size:16px;
 }
 .top-search input:focus {
   outline: none;
   border-color: var(--accent-1);
   box-shadow: 0 10px 30px rgba(30,90,140,0.08), 0 0 0 3px rgba(106, 167, 255, 0.3);
+}
+.search-btn{
+  padding:12px 20px;
+  background:var(--accent-1);
+  color:white;
+  border:none;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+  transition: all .2s ease;
+}
+.search-btn:hover{
+  background:#5a9aff;
+  transform:translateY(-2px);
 }
 .tabs{display:flex;justify-content:center;gap:20px;margin-top:20px;}
 .legacy-stats{
@@ -144,6 +164,96 @@ p.section-intro{text-align:center;color:var(--muted);max-width:700px;margin:0 au
 }
 .legacy-stats .stat h3{margin:0;color:var(--accent-1);font-size:2rem;font-weight:700;}
 .legacy-stats .stat p{margin-top:5px;color:var(--muted);font-weight:600;}
+
+/* Alumni Search Results */
+.search-results{
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px solid rgba(130,200,255,0.22);
+  display: none;
+}
+.search-results.active{
+  display: block;
+}
+.alumni-item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin: 10px 0;
+  background: white;
+  border-radius: 10px;
+  border: 1px solid rgba(130,200,255,0.15);
+  transition: all .2s ease;
+}
+.alumni-item:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(30,90,140,0.1);
+}
+.alumni-info h4{
+  margin: 0;
+  color: var(--heading);
+  font-size: 1.1rem;
+}
+.alumni-info p{
+  margin: 5px 0 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.alumni-avatar{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, var(--accent-1), var(--accent-2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  margin-right: 15px;
+}
+.alumni-details{
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+.connect-btn{
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s ease;
+  font-size: 0.9rem;
+}
+.connect-btn.connect{
+  background: var(--accent-1);
+  color: white;
+}
+.connect-btn.connected{
+  background: var(--success);
+  color: white;
+}
+.connect-btn.connect:hover{
+  background: #5a9aff;
+  transform: translateY(-1px);
+}
+.no-results{
+  text-align: center;
+  color: var(--muted);
+  padding: 40px 20px;
+  font-style: italic;
+}
+.counter-pulse {
+  animation: pulse 0.6s ease-in-out;
+}
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); color: var(--success); }
+  100% { transform: scale(1); }
+}
 </style>
 </head>
 <body>
@@ -169,14 +279,31 @@ p.section-intro{text-align:center;color:var(--muted);max-width:700px;margin:0 au
 </div>
 
 <div class="top-search">
-  <input type="text" id="searchBar" placeholder="Search alumni, services, events…">
+  <input type="text" id="searchBar" placeholder="Search alumni by name, company, or field...">
+  <button class="search-btn" onclick="searchAlumni()">Search Alumni</button>
+</div>
+
+<!-- Search Results Section -->
+<div class="search-results" id="searchResults">
+  <h3 style="margin-top:0;">Search Results</h3>
+  <div id="alumniList"></div>
 </div>
 
 <section id="dashboard">
   <h2>Dashboard</h2>
   <div class="grid">
-    <div class="card"><h3 id="alumniCount">0</h3><p>Connected Alumni</p></div>
-    <div class="card"><h3>5</h3><p>Upcoming Events</p></div>
+    <div class="card">
+      <h3 id="alumniCount">0</h3>
+      <p>Connected Alumni</p>
+    </div>
+    <div class="card">
+      <h3>5</h3>
+      <p>Upcoming Events</p>
+    </div>
+    <div class="card">
+      <h3 id="pendingConnections">0</h3>
+      <p>Pending Connections</p>
+    </div>
   </div>
 </section>
 
@@ -240,12 +367,78 @@ p.section-intro{text-align:center;color:var(--muted);max-width:700px;margin:0 au
 </section>
 
 <script>
-// Sample Data
-const alumni=[
-  {name:'Anita Singh',batch:'2015',field:'Machine Learning'},
-  {name:'Ramesh Patel',batch:'2012',field:'Product Management'},
-  {name:'Leena Dsouza',batch:'2010',field:'Cybersecurity'}
+// Enhanced Alumni Database
+// Enhanced Alumni Database - 63+ Members Total
+const allAlumni = [
+  // From Alumni Directory Page - All 43 Members
+  {name:'Rajesh Patel',batch:'2014',field:'Senior Software Engineer',company:'Google',location:'California',connected:false},
+  {name:'Priya Singh',batch:'2017',field:'Product Manager',company:'Microsoft',location:'Seattle',connected:false},
+  {name:'Vikram Joshi',batch:'2019',field:'Data Scientist',company:'Netflix',location:'California',connected:false},
+  {name:'Sneha Gupta',batch:'2020',field:'UX Designer',company:'Adobe',location:'San Francisco',connected:false},
+  {name:'Abhishek Sharma',batch:'2018',field:'Mobile App Developer',company:'Spotify',location:'New York',connected:false},
+  {name:'Aditya Bhargava',batch:'2015',field:'Quantitative Analyst',company:'JP Morgan',location:'New York',connected:false},
+  {name:'Amit Kumar',batch:'2018',field:'DevOps Engineer',company:'Amazon',location:'Seattle',connected:false},
+  {name:'Anita Verma',batch:'2016',field:'Management Consultant',company:'McKinsey',location:'London',connected:false},
+  {name:'Rohit Agarwal',batch:'2016',field:'Machine Learning Engineer',company:'Tesla',location:'California',connected:false},
+  {name:'Tushar Joshi',batch:'2018',field:'Data Scientist',company:'Netflix',location:'California',connected:false},
+  {name:'Kavya Reddy',batch:'2015',field:'Cloud Architect',company:'AWS',location:'Virginia',connected:false},
+  {name:'Arjun Malhotra',batch:'2019',field:'Full Stack Developer',company:'Meta',location:'California',connected:false},
+  {name:'Deepika Sharma',batch:'2017',field:'Cybersecurity Analyst',company:'IBM',location:'Texas',connected:false},
+  {name:'Suyash Kansal',batch:'2018',field:'Project Lead',company:'Google',location:'California',connected:false},
+  {name:'Nitin Gupta',batch:'2013',field:'Founder & CEO',company:'TechStart Solutions',location:'Bangalore',connected:false},
+  {name:'Simran Kaur',batch:'2014',field:'Co-Founder',company:'EduTech India',location:'Delhi',connected:false},
+  {name:'Karan Mehta',batch:'2016',field:'Startup Founder',company:'FinInnovate',location:'Mumbai',connected:false},
+  {name:'Ravi Chopra',batch:'2012',field:'Investment Banker',company:'Goldman Sachs',location:'New York',connected:false},
+  {name:'Meera Jain',batch:'2015',field:'Strategy Consultant',company:'BCG',location:'Chicago',connected:false},
+  {name:'Ashish Kumar',batch:'2013',field:'Portfolio Manager',company:'BlackRock',location:'New York',connected:false},
+  {name:'Pooja Bansal',batch:'2016',field:'Mechanical Engineer',company:'Boeing',location:'Seattle',connected:false},
+  {name:'Bhavya Gupta',batch:'2018',field:'Full Stack Engineer',company:'Meta',location:'California',connected:false},
+  {name:'Vivek Yadav',batch:'2017',field:'Electrical Engineer',company:'Siemens',location:'Munich',connected:false},
+  {name:'Ritika Goel',batch:'2018',field:'Civil Engineer',company:'L&T Construction',location:'Mumbai',connected:false},
+  {name:'Dr. Anmol Singh',batch:'2014',field:'Biomedical Engineer',company:'Medtronic',location:'Minnesota',connected:false},
+  {name:'Nisha Patel',batch:'2015',field:'Research Scientist',company:'Pfizer',location:'New York',connected:false},
+  {name:'Prof. Sanjay Verma',batch:'2010',field:'Assistant Professor',company:'IIT Delhi',location:'Delhi',connected:false},
+  {name:'Dr. Prerna Gupta',batch:'2016',field:'Research Fellow',company:'MIT',location:'Boston',connected:false},
+  {name:'Ankur Jindal',batch:'2011',field:'IAS Officer',company:'Government of India',location:'Delhi',connected:false},
+  {name:'Disha Bindra',batch:'2018',field:'Backend Engineer',company:'Amazon',location:'Seattle',connected:false},
+  {name:'Swati Khanna',batch:'2017',field:'Policy Analyst',company:'NITI Aayog',location:'Delhi',connected:false},
+  {name:'Rahul Bhatia',batch:'2019',field:'Game Developer',company:'Ubisoft',location:'Montreal',connected:false},
+  {name:'Aditi Sharma',batch:'2020',field:'UI/UX Designer',company:'Figma',location:'San Francisco',connected:false},
+  {name:'Saurabh Thakur',batch:'2018',field:'Data Engineer',company:'Netflix',location:'California',connected:false},
+  {name:'Harsh Agarwal',batch:'2021',field:'Software Engineer',company:'Flipkart',location:'Bangalore',connected:false},
+  {name:'Ishita Roy',batch:'2022',field:'Data Analyst',company:'Zomato',location:'Delhi',connected:false},
+  {name:'Aryan Sethi',batch:'2021',field:'Frontend Developer',company:'Razorpay',location:'Bangalore',connected:false},
+  {name:'Tanvi Gupta',batch:'2022',field:'Product Designer',company:'Swiggy',location:'Bangalore',connected:false},
+  {name:'Manish Choudhary',batch:'2012',field:'Software Architect',company:'Salesforce',location:'San Francisco',connected:false},
+  {name:'Jaskeerat Singh',batch:'2018',field:'Frontend Engineer',company:'Netflix',location:'California',connected:false},
+  {name:'Shreya Kapoor',batch:'2016',field:'Senior Engineer',company:'Uber',location:'San Francisco',connected:false},
+  {name:'Varun Khanna',batch:'2015',field:'AI Researcher',company:'OpenAI',location:'California',connected:false},
+  {name:'Preeti Malhotra',batch:'2013',field:'Staff Engineer',company:'Airbnb',location:'California',connected:false},
+  {name:'Sanjana Reddy',batch:'2019',field:'Product Marketing Manager',company:'Stripe',location:'California',connected:false},
+  {name:'Aman Gupta',batch:'2020',field:'iOS Developer',company:'Apple',location:'California',connected:false},
+  {name:'Neha Agarwal',batch:'2017',field:'Data Science Lead',company:'Airbnb',location:'California',connected:false},
+  {name:'Rohan Sharma',batch:'2016',field:'Security Engineer',company:'Cloudflare',location:'Texas',connected:false},
+  {name:'Priyanka Jain',batch:'2021',field:'Backend Developer',company:'Razorpay',location:'Bangalore',connected:false},
+  {name:'Kunal Singh',batch:'2015',field:'VP Engineering',company:'Paytm',location:'Noida',connected:false},
+  {name:'Divya Kapoor',batch:'2019',field:'UX Researcher',company:'Spotify',location:'Stockholm',connected:false},
+  {name:'Rahul Verma',batch:'2014',field:'Site Reliability Engineer',company:'YouTube',location:'California',connected:false},
+  {name:'Sakshi Bhatt',batch:'2020',field:'Machine Learning Engineer',company:'Uber',location:'California',connected:false},
+  {name:'Arun Kumar',batch:'2018',field:'DevOps Lead',company:'Flipkart',location:'Bangalore',connected:false},
+  {name:'Megha Thakur',batch:'2017',field:'Product Owner',company:'Zomato',location:'Delhi',connected:false},
+  {name:'Vishal Pandey',batch:'2016',field:'Tech Lead',company:'PhonePe',location:'Bangalore',connected:false},
+  {name:'Riya Gupta',batch:'2021',field:'Frontend Engineer',company:'Myntra',location:'Bangalore',connected:false},
+  {name:'Kartik Mehta',batch:'2019',field:'Full Stack Developer',company:'Ola',location:'Bangalore',connected:false},
+  {name:'Anjali Singh',batch:'2018',field:'QA Engineer',company:'Swiggy',location:'Bangalore',connected:false},
+  {name:'Mohit Sharma',batch:'2015',field:'Engineering Manager',company:'CRED',location:'Bangalore',connected:false},
+  {name:'Tanya Joshi',batch:'2020',field:'Data Analyst',company:'Dream11',location:'Mumbai',connected:false},
+  {name:'Akash Patel',batch:'2017',field:'Mobile Developer',company:'Byju\'s',location:'Bangalore',connected:false},
+  {name:'Isha Agarwal',batch:'2019',field:'Product Designer',company:'Unacademy',location:'Bangalore',connected:false},
+  {name:'Nikhil Gupta',batch:'2016',field:'Backend Architect',company:'Grofers',location:'Delhi',connected:false}
 ];
+
+// Initialize displayed alumni (subset for mentorship section)
+const alumni = allAlumni.slice(0,3);
+
 const events=[
   {title:'Annual Alumni Meet',desc:'Reconnect with seniors'},
   {title:'AI Tech Summit',desc:'Discuss AI breakthroughs'},
@@ -271,59 +464,191 @@ const services={
   ]
 };
 
+let connectedCount = 0;
+let pendingCount = 0;
+
+function updateCounters() {
+  document.getElementById('alumniCount').textContent = connectedCount;
+  document.getElementById('pendingConnections').textContent = pendingCount;
+}
+
+function connectToAlumni(alumniIndex) {
+  const alumni = allAlumni[alumniIndex];
+  if (!alumni.connected) {
+    alumni.connected = true;
+    connectedCount++;
+    
+    // Add visual feedback
+    const countElement = document.getElementById('alumniCount');
+    countElement.classList.add('counter-pulse');
+    setTimeout(() => countElement.classList.remove('counter-pulse'), 600);
+    
+    updateCounters();
+    
+    // Update the button
+    const button = document.querySelector(`[data-alumni-index="${alumniIndex}"]`);
+    if (button) {
+      button.textContent = 'Connected ✓';
+      button.className = 'connect-btn connected';
+      button.disabled = true;
+    }
+    
+    // Show success message (optional)
+    showNotification(`Connected with ${alumni.name}!`);
+  }
+}
+
+function showNotification(message) {
+  // Create a temporary notification
+  const notification = document.createElement('div');
+  notification.textContent = message;
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--success);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    z-index: 1000;
+    animation: slideInRight 0.3s ease;
+  `;
+  document.body.appendChild(notification);
+  
+  setTimeout(() => {
+    notification.remove();
+  }, 3000);
+}
+
+function getInitials(name) {
+  return name.split(' ').map(n => n[0]).join('').toUpperCase();
+}
+
+function searchAlumni() {
+  const query = document.getElementById('searchBar').value.toLowerCase().trim();
+  const resultsContainer = document.getElementById('searchResults');
+  const alumniList = document.getElementById('alumniList');
+  
+  if (!query) {
+    resultsContainer.classList.remove('active');
+    return;
+  }
+  
+  // Filter alumni based on search query
+  const filteredAlumni = allAlumni.filter(alumni => 
+    alumni.name.toLowerCase().includes(query) ||
+    alumni.field.toLowerCase().includes(query) ||
+    alumni.company.toLowerCase().includes(query) ||
+    alumni.batch.includes(query)
+  );
+  
+  // Clear previous results
+  alumniList.innerHTML = '';
+  
+  if (filteredAlumni.length === 0) {
+    alumniList.innerHTML = '<div class="no-results">No alumni found matching your search.</div>';
+  } else {
+    filteredAlumni.forEach((alumni, index) => {
+      const globalIndex = allAlumni.findIndex(a => a.name === alumni.name);
+      const alumniItem = document.createElement('div');
+      alumniItem.className = 'alumni-item';
+      alumniItem.innerHTML = `
+        <div class="alumni-details">
+          <div class="alumni-avatar">${getInitials(alumni.name)}</div>
+          <div class="alumni-info">
+            <h4>${alumni.name}</h4>
+            <p>${alumni.field} at ${alumni.company}</p>
+            <p>Batch ${alumni.batch} • ${alumni.location}</p>
+          </div>
+        </div>
+        <button 
+          class="connect-btn ${alumni.connected ? 'connected' : 'connect'}" 
+          data-alumni-index="${globalIndex}"
+          onclick="connectToAlumni(${globalIndex})"
+          ${alumni.connected ? 'disabled' : ''}
+        >
+          ${alumni.connected ? 'Connected ✓' : 'Connect'}
+        </button>
+      `;
+      alumniList.appendChild(alumniItem);
+    });
+  }
+  
+  resultsContainer.classList.add('active');
+}
+
+// Enhanced search with Enter key support
+document.getElementById('searchBar').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') {
+    searchAlumni();
+  }
+});
+
+// Real-time search as user types (optional)
+document.getElementById('searchBar').addEventListener('input', function() {
+  const query = this.value.toLowerCase().trim();
+  if (query.length >= 2) {
+    searchAlumni();
+  } else if (query.length === 0) {
+    document.getElementById('searchResults').classList.remove('active');
+  }
+});
+
 function render(){
-  document.getElementById('alumniCount').textContent=alumni.length;
-// Groups
-const gg = document.getElementById('groupGrid');
-groups.forEach(g => {
-  const d = document.createElement('div');
-  d.className = 'card';
-  d.innerHTML = `
-    <h3>${g}</h3>
-    <p>Join conversations & activities</p>
-    <button class="action-btn">View</button>
-  `;
-  // attach event after button is added
-  d.querySelector('button').addEventListener('click', () => {
-    window.location.href = "{{ url_for('fintech_stud') }}";
+  updateCounters();
+  
+  // Groups
+  const gg = document.getElementById('groupGrid');
+  groups.forEach(g => {
+    const d = document.createElement('div');
+    d.className = 'card';
+    d.innerHTML = `
+      <h3>${g}</h3>
+      <p>Join conversations & activities</p>
+      <button class="action-btn">View</button>
+    `;
+    // attach event after button is added
+    d.querySelector('button').addEventListener('click', () => {
+      window.location.href = "{{ url_for('fintech_stud') }}";
+    });
+    gg.appendChild(d);
   });
-  gg.appendChild(d);
-});
 
-// Events
-const eg = document.getElementById('eventGrid');
-events.forEach(ev => {
-  const div = document.createElement('div');
-  div.className = 'card';
-  div.innerHTML = `
-    <h3>${ev.title}</h3>
-    <p>${ev.desc}</p>
-    <button class="action-btn">View</button>
-  `;
-  div.querySelector('button').addEventListener('click', () => {
-    window.location.href ="{{ url_for('fintech_stud') }}";
+  // Events
+  const eg = document.getElementById('eventGrid');
+  events.forEach(ev => {
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `
+      <h3>${ev.title}</h3>
+      <p>${ev.desc}</p>
+      <button class="action-btn">View</button>
+    `;
+    div.querySelector('button').addEventListener('click', () => {
+      window.location.href ="{{ url_for('fintech_stud') }}";
+    });
+    eg.appendChild(div);
   });
-  eg.appendChild(div);
-});
 
-// Mentors
-const mg = document.getElementById('mentorGrid');
-alumni.forEach(a => {
-  const d = document.createElement('div');
-  d.className = 'card';
-  d.innerHTML = `
-    <h3>${a.name}</h3>
-    <p>Batch ${a.batch}<br>${a.field}</p>
-    <button class="action-btn">Request Mentorship</button>
-  `;
-  d.querySelector('button').addEventListener('click', () => {
-    window.location.href = "{{ url_for('fintech_stud') }}";
+  // Mentors (showing limited alumni for mentorship section)
+  const mg = document.getElementById('mentorGrid');
+  alumni.forEach(a => {
+    const d = document.createElement('div');
+    d.className = 'card';
+    d.innerHTML = `
+      <h3>${a.name}</h3>
+      <p>Batch ${a.batch}<br>${a.field}</p>
+      <button class="action-btn">Request Mentorship</button>
+    `;
+    d.querySelector('button').addEventListener('click', () => {
+      window.location.href = "{{ url_for('fintech_stud') }}";
+    });
+    mg.appendChild(d);
   });
-  mg.appendChild(d);
-});
 
   loadServices('approved');
 }
+
 render();
 
 function loadServices(tab){
@@ -336,6 +661,7 @@ function loadServices(tab){
     sg.appendChild(d);
   });
 }
+
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.onclick=()=>{
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
@@ -345,8 +671,22 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
 });
 
 document.addEventListener('click',e=>{
-  if(e.target.classList.contains('action-btn')){
-    e.target.textContent = e.target.classList.contains('joined') ? 'Joined' : e.target.textContent.replace('Request Mentorship','Request Mentorship').replace('Apply','Apply').replace('Enter Nostalgia','Enter Nostalgia') || 'Join';
+  if(e.target.classList.contains('action-btn') && !e.target.hasAttribute('data-alumni-index')){
+    const originalText = e.target.textContent;
+    if (!e.target.classList.contains('joined')) {
+      e.target.classList.add('joined');
+      if (originalText.includes('Request')) {
+        e.target.textContent = 'Requested';
+        pendingCount++;
+        updateCounters();
+      } else if (originalText.includes('Apply')) {
+        e.target.textContent = 'Applied';
+      } else if (originalText.includes('Enter')) {
+        e.target.textContent = 'Exploring...';
+      } else {
+        e.target.textContent = 'Joined';
+      }
+    }
   }
 });
 
@@ -362,6 +702,16 @@ function detectLocation(){
     document.getElementById('locationResult').textContent='Geolocation not supported.';
   }
 }
+
+// Add CSS for slide-in animation
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+`;
+document.head.appendChild(style);
 </script>
 </body>
 </html>
