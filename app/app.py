@@ -290,8 +290,13 @@ def alumni_dashboard():
         flash("Please log in first!", "error")
         return redirect(url_for('login_alumni'))
     
+    conn = get_connection("AlumniNexus")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Alumni ORDER BY graduation_year DESC")
+    alumni_data = cursor.fetchall()
+    conn.close()
     alumni_id = session.get('alumni_id')
-    return render_template('alumnipage.html', alumni_id=alumni_id)
+    return render_template('alumnipage.html', alumni_id=alumni_id, alumni_data=alumni_data)
 
 
 @app.route('/alumni-card')

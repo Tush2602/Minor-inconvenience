@@ -1,4 +1,251 @@
-<!DOCTYPE html>
+<script>
+    // Global variables to store original alumni data
+    let allAlumniCards = [];
+    let currentSearchTerm = '';
+    let displayedCount = 37; // Show all initially since we have 37 cards
+    const initialLoadCount = 12;
+    const loadMoreCount = 8;
+
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+      // Store all alumni cards for filtering/sorting
+      allAlumniCards = Array.from(document.querySelectorAll('.alumni-card'));
+      
+      // Set up initial pagination - show first 12 cards
+      showInitialCards();
+      updateCountDisplay();
+    });
+
+    // Show initial set of cards
+    function showInitialCards() {
+      allAlumniCards.forEach((card, index) => {
+        if (index < initialLoadCount) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      displayedCount = Math.min(initialLoadCount, allAlumniCards.length);
+      
+      // Show load more button if there are more cards
+      const loadMoreBtn = document.getElementById('loadMoreBtn');
+      if (allAlumniCards.length > initialLoadCount) {
+        loadMoreBtn.style.display = 'inline-block';
+      }
+    }
+
+    // Load more alumni function
+    function loadMoreAlumni() {
+      const hiddenCards = allAlumniCards.filter(card => card.style.display === 'none');
+      const cardsToShow = hiddenCards.slice(0, loadMoreCount);
+      
+      cardsToShow.forEach(card => {
+        card.style.display = 'block';
+      });
+      
+      displayedCount += cardsToShow.length;
+      updateCountDisplay();
+      
+      // Hide load more button if all cards are shown
+      if (displayedCount >= allAlumniCards.length) {
+        document.getElementById('loadMoreBtn').style.display = 'none';
+      }
+    }
+
+    // Update count display
+    function updateCountDisplay() {
+      document.getElementById('currentCount').textContent = displayedCount;
+      document.getElementById('totalAlumni').textContent = allAlumniCards.length;
+    }
+
+    // Function to filter alumni based on search input
+    function filterAlumni() {
+      currentSearchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const alumniGrid = document.getElementById('alumniGrid');
+      const searchResults = document.getElementById('searchResults');
+      const noResults = document.getElementById('noResults');
+      const resultsCount = document.getElementById('resultsCount');
+      const loadMoreBtn = document.getElementById('loadMoreBtn');
+      
+      let visibleCount = 0;
+
+      allAlumniCards.forEach(card => {
+        const name = card.getAttribute('data-name').toLowerCase();
+        const role = card.getAttribute('data-role').toLowerCase();
+        const company = card.getAttribute('data-company').toLowerCase();
+        
+        const matchesSearch = currentSearchTerm === '' || 
+                            name.includes(currentSearchTerm) || 
+                            role.includes(currentSearchTerm) || 
+                            company.includes(currentSearchTerm);
+
+        if (matchesSearch) {
+          card.style.display = 'block';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Update search results display
+      if (currentSearchTerm === '') {
+        searchResults.style.display = 'none';
+        noResults.style.display = 'none';
+        // Reset to initial pagination
+        showInitialCards();
+      } else {
+        searchResults.style.display = 'block';
+        loadMoreBtn.style.display = 'none'; // Hide load more when searching
+        
+        if (visibleCount > 0) {
+          resultsCount.textContent = `Found ${visibleCount} alumni matching "${currentSearchTerm}"`;
+          noResults.style.display = 'none';
+        } else {
+          resultsCount.textContent = `No results found for "${currentSearchTerm}"`;
+          noResults.style.display = 'block';
+        }
+        
+        // Update count for search results
+        displayedCount = visibleCount;
+        updateCountDisplay();
+      }
+
+      // Re-apply current sort after filtering
+      const sortSelect = document.getElementById('sortSelect');
+      if (sortSelect.value !== 'name') {
+        sortAlumni();
+      }
+    }
+
+    // Function to sort alumni based on selected criteria
+    function sortAlumni() {
+      const sortValue = document.getElementById('sortSelect').value;
+      const alumniGrid = document.getElementById('alumniGrid');
+      
+      // Get only visible cards for sorting
+      const visibleCards = allAlumniCards.filter(card => card.style.display !== 'none');
+      
+      visibleCards.sort((a, b) => {
+        switch(sortValue) {
+          case 'name':
+            return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name'));
+          
+          case 'graduation':
+            return parseInt(b.getAttribute('data-graduation')) - parseInt(a.getAttribute('data-graduation'));
+          
+          case 'experience':
+            return parseInt(b.getAttribute('data-experience')) - parseInt(a.getAttribute('data-experience'));
+          
+          case 'company':
+            return a.getAttribute('data-company').localeCompare(b.getAttribute('data-company'));
+          
+          default:
+            return 0;
+        }
+      });
+
+      // Clear the grid and append sorted cards
+      alumniGrid.innerHTML = '';
+      visibleCards.forEach(card => alumniGrid.appendChild(card));
+      
+      // Also append hidden cards back to maintain the DOM structure
+      allAlumniCards.filter(card => card.style.display === 'none').forEach(card => {
+        alumniGrid.appendChild(card);
+      });
+    }
+
+  // Function to handle profile viewing
+  function viewAlumniProfile() {
+    // Redirect using the URL generated by Flask's url_for
+    window.location.href = "{{ url_for('alumni_card') }}";
+  }
+
+
+    // Enhanced action button functionality
+    document.querySelectorAll('.action-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        
+        const originalText = btn.dataset.originalText || btn.textContent;
+        if (!btn.dataset.originalText) {
+          btn.dataset.originalText = originalText;
+        }
+
+        if (btn.classList.contains('joined')) {
+          btn.classList.remove('joined');
+          btn.textContent = originalText;
+          
+          // Add a subtle animation
+          btn.style.transform = 'scale(0.95)';
+          setTimeout(() => {
+            btn.style.transform = '';
+          }, 150);
+        } else {
+          btn.classList.add('joined');
+          
+          // Dynamic text based on action
+          if (originalText.toLowerCase() === 'view') btn.textContent = 'Joined';
+          else if (originalText.toLowerCase().includes('request')) btn.textContent = 'Requested';
+          else if (originalText.toLowerCase().includes('contribute')) btn.textContent = 'Contributed';
+          else if (originalText.toLowerCase().includes('register')) btn.textContent = 'Registered';
+          else if (originalText.toLowerCase().includes('explore')) btn.textContent = 'Exploring...';
+          else if (originalText.toLowerCase().includes('load more')) return; // Don't change load more button
+          else btn.textContent = 'Joined';
+          
+          // Add a subtle animation
+          btn.style.transform = 'scale(1.05)';
+          setTimeout(() => {
+            btn.style.transform = '';
+          }, 150);
+        }
+      });
+    });
+
+    // Add smooth scrolling for navigation links
+    document.querySelectorAll('nav a[href^="#"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Add keyboard support for search
+    document.getElementById('searchInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.target.value = '';
+        filterAlumni();
+        e.target.blur();
+      }
+    });
+
+    // Add search filters for quick filtering
+    function quickFilter(criteria) {
+      const searchInput = document.getElementById('searchInput');
+      searchInput.value = criteria;
+      filterAlumni();
+    }
+
+    // Add company-specific filters
+    function filterByCompany(company) {
+      quickFilter(company);
+    }
+
+    // Add role-specific filters  
+    function filterByRole(role) {
+      quickFilter(role);
+    }
+
+    // Add graduation year filters
+    function filterByYear(year) {
+      quickFilter(year);
+    }
+  </script><!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -112,7 +359,6 @@
     }
     .card::before{ width:180px;height:180px; right:-40px; top:-60px; background:linear-gradient(180deg, var(--accent-2), var(--accent-1)); }
     .card > * { position: relative; z-index: 1; }
-
 
     /* === Alumni Directory === */
     .directory-header {
@@ -254,6 +500,25 @@
         color: var(--muted-color);
         font-weight: 600;
     }
+
+    /* === Search Results Display === */
+    .search-results {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(130, 200, 255, 0.22);
+    }
+    
+    .no-results {
+      text-align: center;
+      color: var(--muted-color);
+      font-style: italic;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 15px;
+      margin: 20px 0;
+    }
   </style>
 </head>
 <body>
@@ -262,7 +527,7 @@
   <header>
     <h1>Alumni Nexus</h1>
     <nav>
-      <a href="{{ url_for('alumni_card', alumni_id=alumni_id) }}">My Profile</a>
+      <a href="#" onclick="viewAlumniProfile()">My Profile</a>
       <a href="#cohorts">Groups</a>
       <a href="#contribute">Contribute</a>
       <a href="#intern">Internships</a>
@@ -280,16 +545,24 @@
 
     <!-- Search bar -->
     <div class="search-bar">
-      <input type="text" placeholder="Search by name, role, or company...">
-      <select>
-        <option>Sort by Name</option>
-        <option>Sort by Graduation Year</option>
+      <input type="text" id="searchInput" placeholder="Search by name, role, or company..." oninput="filterAlumni()">
+      <select id="sortSelect" onchange="sortAlumni()">
+        <option value="name">Sort by Name</option>
+        <option value="graduation">Sort by Graduation Year</option>
+        <option value="experience">Sort by Experience</option>
+        <option value="company">Sort by Company</option>
       </select>
     </div>
 
+    <!-- Search Results Display -->
+    <div id="searchResults" class="search-results" style="display: none;">
+      <p id="resultsCount">Showing all alumni</p>
+    </div>
+
     <!-- Alumni Grid -->
-    <div class="alumni-grid">
-      <div class="card alumni-card">
+    <div class="alumni-grid" id="alumniGrid">
+      <!-- Tech Giants -->
+      <div class="card alumni-card" data-name="Abhishek Sharma" data-role="Mobile App Developer" data-company="Spotify" data-graduation="2018" data-experience="6">
         <div class="alumni-avatar">AS</div>
         <h3>Abhishek Sharma</h3>
         <p>Mobile App Developer</p>
@@ -297,7 +570,7 @@
         <p>Class of 2018</p>
         <span class="badge">6 years experience</span>
       </div>
-      <div class="card alumni-card">
+      <div class="card alumni-card" data-name="Aditya Bhargava" data-role="Quantitative Analyst" data-company="JP Morgan" data-graduation="2015" data-experience="9">
         <div class="alumni-avatar">AB</div>
         <h3>Aditya Bhargava</h3>
         <p>Quantitative Analyst</p>
@@ -305,7 +578,7 @@
         <p>Class of 2015</p>
         <span class="badge">9 years experience</span>
       </div>
-      <div class="card alumni-card">
+      <div class="card alumni-card" data-name="Amit Kumar" data-role="DevOps Engineer" data-company="Amazon" data-graduation="2018" data-experience="6">
         <div class="alumni-avatar">AK</div>
         <h3>Amit Kumar</h3>
         <p>DevOps Engineer</p>
@@ -313,7 +586,7 @@
         <p>Class of 2018</p>
         <span class="badge">6 years experience</span>
       </div>
-      <div class="card alumni-card">
+      <div class="card alumni-card" data-name="Anita Verma" data-role="Management Consultant" data-company="McKinsey" data-graduation="2016" data-experience="8">
         <div class="alumni-avatar">AV</div>
         <h3>Anita Verma</h3>
         <p>Management Consultant</p>
@@ -321,6 +594,357 @@
         <p>Class of 2016</p>
         <span class="badge">8 years experience</span>
       </div>
+      <div class="card alumni-card" data-name="Rajesh Patel" data-role="Senior Software Engineer" data-company="Google" data-graduation="2014" data-experience="10">
+        <div class="alumni-avatar">RP</div>
+        <h3>Rajesh Patel</h3>
+        <p>Senior Software Engineer</p>
+        <p><strong>Google</strong></p>
+        <p>Class of 2014</p>
+        <span class="badge">10 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Priya Singh" data-role="Product Manager" data-company="Microsoft" data-graduation="2017" data-experience="7">
+        <div class="alumni-avatar">PS</div>
+        <h3>Priya Singh</h3>
+        <p>Product Manager</p>
+        <p><strong>Microsoft</strong></p>
+        <p>Class of 2017</p>
+        <span class="badge">7 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Vikram Joshi" data-role="Data Scientist" data-company="Netflix" data-graduation="2019" data-experience="5">
+        <div class="alumni-avatar">VJ</div>
+        <h3>Vikram Joshi</h3>
+        <p>Data Scientist</p>
+        <p><strong>Netflix</strong></p>
+        <p>Class of 2019</p>
+        <span class="badge">5 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Sneha Gupta" data-role="UX Designer" data-company="Adobe" data-graduation="2020" data-experience="4">
+        <div class="alumni-avatar">SG</div>
+        <h3>Sneha Gupta</h3>
+        <p>UX Designer</p>
+        <p><strong>Adobe</strong></p>
+        <p>Class of 2020</p>
+        <span class="badge">4 years experience</span>
+      </div>
+
+      <!-- More Tech Professionals -->
+      <div class="card alumni-card" data-name="Rohit Agarwal" data-role="Machine Learning Engineer" data-company="Tesla" data-graduation="2016" data-experience="8">
+        <div class="alumni-avatar">RA</div>
+        <h3>Rohit Agarwal</h3>
+        <p>Machine Learning Engineer</p>
+        <p><strong>Tesla</strong></p>
+        <p>Class of 2016</p>
+        <span class="badge">8 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Tushar Joshi" data-role="Data Scientist" data-company="Netflix" data-graduation="2022" data-experience="3">
+        <div class="alumni-avatar">TJ</div>
+        <h3>Tushar Joshi</h3>
+        <p>Data Scientist</p>
+        <p><strong>Netflix</strong></p>
+        <p>Class of 2018</p>
+        <span class="badge">3 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Kavya Reddy" data-role="Cloud Architect" data-company="AWS" data-graduation="2015" data-experience="9">
+        <div class="alumni-avatar">KR</div>
+        <h3>Kavya Reddy</h3>
+        <p>Cloud Architect</p>
+        <p><strong>AWS</strong></p>
+        <p>Class of 2015</p>
+        <span class="badge">9 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Arjun Malhotra" data-role="Full Stack Developer" data-company="Meta" data-graduation="2019" data-experience="5">
+        <div class="alumni-avatar">AM</div>
+        <h3>Arjun Malhotra</h3>
+        <p>Full Stack Developer</p>
+        <p><strong>Meta</strong></p>
+        <p>Class of 2019</p>
+        <span class="badge">5 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Deepika Sharma" data-role="Cybersecurity Analyst" data-company="IBM" data-graduation="2017" data-experience="7">
+        <div class="alumni-avatar">DS</div>
+        <h3>Deepika Sharma</h3>
+        <p>Cybersecurity Analyst</p>
+        <p><strong>IBM</strong></p>
+        <p>Class of 2017</p>
+        <span class="badge">7 years experience</span>
+      </div>
+
+      <div class="card alumni-card" data-name="Suyash Kansal" data-role="Project Lead" data-company="Google" data-graduation="2022" data-experience="3">
+        <div class="alumni-avatar">TJ</div>
+        <h3>Suyash Kansal</h3>
+        <p>Project Lead</p>
+        <p><strong>Google</strong></p>
+        <p>Class of 2018</p>
+        <span class="badge">3 years experience</span>
+      </div>
+
+      <!-- Entrepreneurs & Founders -->
+      <div class="card alumni-card" data-name="Nitin Gupta" data-role="Founder & CEO" data-company="TechStart Solutions" data-graduation="2013" data-experience="11">
+        <div class="alumni-avatar">NG</div>
+        <h3>Nitin Gupta</h3>
+        <p>Founder & CEO</p>
+        <p><strong>TechStart Solutions</strong></p>
+        <p>Class of 2013</p>
+        <span class="badge">11 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Simran Kaur" data-role="Co-Founder" data-company="EduTech India" data-graduation="2014" data-experience="10">
+        <div class="alumni-avatar">SK</div>
+        <h3>Simran Kaur</h3>
+        <p>Co-Founder</p>
+        <p><strong>EduTech India</strong></p>
+        <p>Class of 2014</p>
+        <span class="badge">10 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Karan Mehta" data-role="Startup Founder" data-company="FinInnovate" data-graduation="2016" data-experience="8">
+        <div class="alumni-avatar">KM</div>
+        <h3>Karan Mehta</h3>
+        <p>Startup Founder</p>
+        <p><strong>FinInnovate</strong></p>
+        <p>Class of 2016</p>
+        <span class="badge">8 years experience</span>
+      </div>
+
+      <!-- Finance & Consulting -->
+      <div class="card alumni-card" data-name="Ravi Chopra" data-role="Investment Banker" data-company="Goldman Sachs" data-graduation="2012" data-experience="12">
+        <div class="alumni-avatar">RC</div>
+        <h3>Ravi Chopra</h3>
+        <p>Investment Banker</p>
+        <p><strong>Goldman Sachs</strong></p>
+        <p>Class of 2012</p>
+        <span class="badge">12 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Meera Jain" data-role="Strategy Consultant" data-company="BCG" data-graduation="2015" data-experience="9">
+        <div class="alumni-avatar">MJ</div>
+        <h3>Meera Jain</h3>
+        <p>Strategy Consultant</p>
+        <p><strong>BCG</strong></p>
+        <p>Class of 2015</p>
+        <span class="badge">9 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Ashish Kumar" data-role="Portfolio Manager" data-company="BlackRock" data-graduation="2013" data-experience="11">
+        <div class="alumni-avatar">AK</div>
+        <h3>Ashish Kumar</h3>
+        <p>Portfolio Manager</p>
+        <p><strong>BlackRock</strong></p>
+        <p>Class of 2013</p>
+        <span class="badge">11 years experience</span>
+      </div>
+
+      <!-- Engineering & Manufacturing -->
+      <div class="card alumni-card" data-name="Pooja Bansal" data-role="Mechanical Engineer" data-company="Boeing" data-graduation="2016" data-experience="8">
+        <div class="alumni-avatar">PB</div>
+        <h3>Pooja Bansal</h3>
+        <p>Mechanical Engineer</p>
+        <p><strong>Boeing</strong></p>
+        <p>Class of 2016</p>
+        <span class="badge">8 years experience</span>
+      </div>
+
+      <div class="card alumni-card" data-name="Bhavya Gupta" data-role="Full Stack Developer" data-company="Meta" data-graduation="2022" data-experience="3">
+        <div class="alumni-avatar">BG</div>
+        <h3>Bhavya Gupta</h3>
+        <p>Full Stack Engineer</p>
+        <p><strong>Meta</strong></p>
+        <p>Class of 2018</p>
+        <span class="badge">3 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Vivek Yadav" data-role="Electrical Engineer" data-company="Siemens" data-graduation="2017" data-experience="7">
+        <div class="alumni-avatar">VY</div>
+        <h3>Vivek Yadav</h3>
+        <p>Electrical Engineer</p>
+        <p><strong>Siemens</strong></p>
+        <p>Class of 2017</p>
+        <span class="badge">7 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Ritika Goel" data-role="Civil Engineer" data-company="L&T Construction" data-graduation="2018" data-experience="6">
+        <div class="alumni-avatar">RG</div>
+        <h3>Ritika Goel</h3>
+        <p>Civil Engineer</p>
+        <p><strong>L&T Construction</strong></p>
+        <p>Class of 2018</p>
+        <span class="badge">6 years experience</span>
+      </div>
+
+      <!-- Healthcare & Biotech -->
+      <div class="card alumni-card" data-name="Dr. Anmol Singh" data-role="Biomedical Engineer" data-company="Medtronic" data-graduation="2014" data-experience="10">
+        <div class="alumni-avatar">AS</div>
+        <h3>Dr. Anmol Singh</h3>
+        <p>Biomedical Engineer</p>
+        <p><strong>Medtronic</strong></p>
+        <p>Class of 2014</p>
+        <span class="badge">10 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Nisha Patel" data-role="Research Scientist" data-company="Pfizer" data-graduation="2015" data-experience="9">
+        <div class="alumni-avatar">NP</div>
+        <h3>Nisha Patel</h3>
+        <p>Research Scientist</p>
+        <p><strong>Pfizer</strong></p>
+        <p>Class of 2015</p>
+        <span class="badge">9 years experience</span>
+      </div>
+
+      <!-- Academia & Research -->
+      <div class="card alumni-card" data-name="Prof. Sanjay Verma" data-role="Assistant Professor" data-company="IIT Delhi" data-graduation="2010" data-experience="14">
+        <div class="alumni-avatar">SV</div>
+        <h3>Prof. Sanjay Verma</h3>
+        <p>Assistant Professor</p>
+        <p><strong>IIT Delhi</strong></p>
+        <p>Class of 2010</p>
+        <span class="badge">14 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Dr. Prerna Gupta" data-role="Research Fellow" data-company="MIT" data-graduation="2016" data-experience="8">
+        <div class="alumni-avatar">PG</div>
+        <h3>Dr. Prerna Gupta</h3>
+        <p>Research Fellow</p>
+        <p><strong>MIT</strong></p>
+        <p>Class of 2016</p>
+        <span class="badge">8 years experience</span>
+      </div>
+
+      <!-- Government & Public Service -->
+      <div class="card alumni-card" data-name="Ankur Jindal" data-role="IAS Officer" data-company="Government of India" data-graduation="2011" data-experience="13">
+        <div class="alumni-avatar">AJ</div>
+        <h3>Ankur Jindal</h3>
+        <p>IAS Officer</p>
+        <p><strong>Government of India</strong></p>
+        <p>Class of 2011</p>
+        <span class="badge">13 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Disha Bindra" data-role="Backend Engineer" data-company="Amazon" data-graduation="2022" data-experience="3">
+        <div class="alumni-avatar">DB</div>
+        <h3>Disha Bindra</h3>
+        <p>Backend Engineer</p>
+        <p><strong>Amazon</strong></p>
+        <p>Class of 2018</p>
+        <span class="badge">3 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Swati Khanna" data-role="Policy Analyst" data-company="NITI Aayog" data-graduation="2017" data-experience="7">
+        <div class="alumni-avatar">SK</div>
+        <h3>Swati Khanna</h3>
+        <p>Policy Analyst</p>
+        <p><strong>NITI Aayog</strong></p>
+        <p>Class of 2017</p>
+        <span class="badge">7 years experience</span>
+      </div>
+
+      <!-- Creative Industries -->
+      <div class="card alumni-card" data-name="Rahul Bhatia" data-role="Game Developer" data-company="Ubisoft" data-graduation="2019" data-experience="5">
+        <div class="alumni-avatar">RB</div>
+        <h3>Rahul Bhatia</h3>
+        <p>Game Developer</p>
+        <p><strong>Ubisoft</strong></p>
+        <p>Class of 2019</p>
+        <span class="badge">5 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Aditi Sharma" data-role="UI/UX Designer" data-company="Figma" data-graduation="2020" data-experience="4">
+        <div class="alumni-avatar">AS</div>
+        <h3>Aditi Sharma</h3>
+        <p>UI/UX Designer</p>
+        <p><strong>Figma</strong></p>
+        <p>Class of 2020</p>
+        <span class="badge">4 years experience</span>
+      </div>
+
+      <div class="card alumni-card" data-name="Saurabh Thakur" data-role="Data Engineer" data-company="Netflix" data-graduation="2022" data-experience="3">
+        <div class="alumni-avatar">ST</div>
+        <h3>Saurabh Thakur</h3>
+        <p>Data Engineer</p>
+        <p><strong>Netflix</strong></p>
+        <p>Class of 2018</p>
+        <span class="badge">3 years experience</span>
+      </div>
+
+      <!-- More Recent Graduates -->
+      <div class="card alumni-card" data-name="Harsh Agarwal" data-role="Software Engineer" data-company="Flipkart" data-graduation="2021" data-experience="3">
+        <div class="alumni-avatar">HA</div>
+        <h3>Harsh Agarwal</h3>
+        <p>Software Engineer</p>
+        <p><strong>Flipkart</strong></p>
+        <p>Class of 2021</p>
+        <span class="badge">3 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Ishita Roy" data-role="Data Analyst" data-company="Zomato" data-graduation="2022" data-experience="2">
+        <div class="alumni-avatar">IR</div>
+        <h3>Ishita Roy</h3>
+        <p>Data Analyst</p>
+        <p><strong>Zomato</strong></p>
+        <p>Class of 2022</p>
+        <span class="badge">2 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Aryan Sethi" data-role="Frontend Developer" data-company="Razorpay" data-graduation="2021" data-experience="3">
+        <div class="alumni-avatar">AS</div>
+        <h3>Aryan Sethi</h3>
+        <p>Frontend Developer</p>
+        <p><strong>Razorpay</strong></p>
+        <p>Class of 2021</p>
+        <span class="badge">3 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Tanvi Gupta" data-role="Product Designer" data-company="Swiggy" data-graduation="2022" data-experience="2">
+        <div class="alumni-avatar">TJ</div>
+        <h3>Tanvi Gupta</h3>
+        <p>Product Designer</p>
+        <p><strong>Swiggy</strong></p>
+        <p>Class of 2022</p>
+        <span class="badge">2 years experience</span>
+      </div>
+
+      <!-- International Alumni -->
+      <div class="card alumni-card" data-name="Manish Choudhary" data-role="Software Architect" data-company="Salesforce" data-graduation="2012" data-experience="12">
+        <div class="alumni-avatar">MC</div>
+        <h3>Manish Choudhary</h3>
+        <p>Software Architect</p>
+        <p><strong>Salesforce</strong></p>
+        <p>Class of 2012</p>
+        <span class="badge">12 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Jaskeerat Singh" data-role="Frontend Engineer" data-company="Netflix" data-graduation="2022" data-experience="3">
+        <div class="alumni-avatar">JS</div>
+        <h3>Jaskeerat Singh</h3>
+        <p>Frontend Engineer</p>
+        <p><strong>Netflix</strong></p>
+        <p>Class of 2018</p>
+        <span class="badge">3 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Shreya Kapoor" data-role="Senior Engineer" data-company="Uber" data-graduation="2016" data-experience="8">
+        <div class="alumni-avatar">SK</div>
+        <h3>Shreya Kapoor</h3>
+        <p>Senior Engineer</p>
+        <p><strong>Uber</strong></p>
+        <p>Class of 2016</p>
+        <span class="badge">8 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Varun Khanna" data-role="AI Researcher" data-company="OpenAI" data-graduation="2015" data-experience="9">
+        <div class="alumni-avatar">VK</div>
+        <h3>Varun Khanna</h3>
+        <p>AI Researcher</p>
+        <p><strong>OpenAI</strong></p>
+        <p>Class of 2015</p>
+        <span class="badge">9 years experience</span>
+      </div>
+      <div class="card alumni-card" data-name="Preeti Malhotra" data-role="Staff Engineer" data-company="Airbnb" data-graduation="2013" data-experience="11">
+        <div class="alumni-avatar">PM</div>
+        <h3>Preeti Malhotra</h3>
+        <p>Staff Engineer</p>
+        <p><strong>Airbnb</strong></p>
+        <p>Class of 2013</p>
+        <span class="badge">11 years experience</span>
+      </div>
+    </div>
+
+    <!-- Load More Button -->
+    <div style="text-align: center; margin-top: 30px;">
+      <button id="loadMoreBtn" class="action-btn" onclick="loadMoreAlumni()" style="display: none;">
+        Load More Alumni
+      </button>
+      <p id="totalCount" style="color: var(--muted-color); margin-top: 15px;">
+        Showing <span id="currentCount">37</span> of <span id="totalAlumni">37</span> alumni
+      </p>
+    </div>
+
+    <!-- No Results Message -->
+    <div id="noResults" class="no-results" style="display: none;">
+      <h3>No alumni found</h3>
+      <p>Try adjusting your search criteria or browse all alumni above.</p>
     </div>
   </section>
 
@@ -394,8 +1018,117 @@
   </section>
 
   <script>
+    // Global variables to store original alumni data
+    let allAlumniCards = [];
+    let currentSearchTerm = '';
+
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+      // Store all alumni cards for filtering/sorting
+      allAlumniCards = Array.from(document.querySelectorAll('.alumni-card'));
+    });
+
+    // Function to filter alumni based on search input
+    function filterAlumni() {
+      currentSearchTerm = document.getElementById('searchInput').value.toLowerCase();
+      const alumniGrid = document.getElementById('alumniGrid');
+      const searchResults = document.getElementById('searchResults');
+      const noResults = document.getElementById('noResults');
+      const resultsCount = document.getElementById('resultsCount');
+      
+      let visibleCount = 0;
+
+      allAlumniCards.forEach(card => {
+        const name = card.getAttribute('data-name').toLowerCase();
+        const role = card.getAttribute('data-role').toLowerCase();
+        const company = card.getAttribute('data-company').toLowerCase();
+        
+        const matchesSearch = currentSearchTerm === '' || 
+                            name.includes(currentSearchTerm) || 
+                            role.includes(currentSearchTerm) || 
+                            company.includes(currentSearchTerm);
+
+        if (matchesSearch) {
+          card.style.display = 'block';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Update search results display
+      if (currentSearchTerm === '') {
+        searchResults.style.display = 'none';
+        noResults.style.display = 'none';
+      } else {
+        searchResults.style.display = 'block';
+        if (visibleCount > 0) {
+          resultsCount.textContent = `Found ${visibleCount} alumni matching "${currentSearchTerm}"`;
+          noResults.style.display = 'none';
+        } else {
+          resultsCount.textContent = `No results found for "${currentSearchTerm}"`;
+          noResults.style.display = 'block';
+        }
+      }
+
+      // Re-apply current sort after filtering
+      const sortSelect = document.getElementById('sortSelect');
+      if (sortSelect.value !== 'name') {
+        sortAlumni();
+      }
+    }
+
+    // Function to sort alumni based on selected criteria
+    function sortAlumni() {
+      const sortValue = document.getElementById('sortSelect').value;
+      const alumniGrid = document.getElementById('alumniGrid');
+      
+      // Get only visible cards for sorting
+      const visibleCards = allAlumniCards.filter(card => card.style.display !== 'none');
+      
+      visibleCards.sort((a, b) => {
+        switch(sortValue) {
+          case 'name':
+            return a.getAttribute('data-name').localeCompare(b.getAttribute('data-name'));
+          
+          case 'graduation':
+            return parseInt(b.getAttribute('data-graduation')) - parseInt(a.getAttribute('data-graduation'));
+          
+          case 'experience':
+            return parseInt(b.getAttribute('data-experience')) - parseInt(a.getAttribute('data-experience'));
+          
+          case 'company':
+            return a.getAttribute('data-company').localeCompare(b.getAttribute('data-company'));
+          
+          default:
+            return 0;
+        }
+      });
+
+      // Clear the grid and append sorted cards
+      alumniGrid.innerHTML = '';
+      visibleCards.forEach(card => alumniGrid.appendChild(card));
+      
+      // Also append hidden cards back to maintain the DOM structure
+      allAlumniCards.filter(card => card.style.display === 'none').forEach(card => {
+        alumniGrid.appendChild(card);
+      });
+    }
+
+    // Function to handle profile viewing (placeholder)
+    function viewAlumniProfile() {
+      // This would typically redirect to the alumni profile page
+      // For now, we'll just show an alert
+      alert('Redirecting to your alumni profile...');
+      // In your Flask app, this should redirect to the alumni card route
+      // window.location.href = '/alumni-card';
+    }
+
+    // Enhanced action button functionality
     document.querySelectorAll('.action-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        
         const originalText = btn.dataset.originalText || btn.textContent;
         if (!btn.dataset.originalText) {
           btn.dataset.originalText = originalText;
@@ -404,15 +1137,53 @@
         if (btn.classList.contains('joined')) {
           btn.classList.remove('joined');
           btn.textContent = originalText;
+          
+          // Add a subtle animation
+          btn.style.transform = 'scale(0.95)';
+          setTimeout(() => {
+            btn.style.transform = '';
+          }, 150);
         } else {
           btn.classList.add('joined');
-          if (originalText.toLowerCase() === 'join') btn.textContent = 'Joined';
+          
+          // Dynamic text based on action
+          if (originalText.toLowerCase() === 'view') btn.textContent = 'Joined';
           else if (originalText.toLowerCase().includes('request')) btn.textContent = 'Requested';
           else if (originalText.toLowerCase().includes('contribute')) btn.textContent = 'Contributed';
           else if (originalText.toLowerCase().includes('register')) btn.textContent = 'Registered';
           else if (originalText.toLowerCase().includes('explore')) btn.textContent = 'Exploring...';
+          else btn.textContent = 'Joined';
+          
+          // Add a subtle animation
+          btn.style.transform = 'scale(1.05)';
+          setTimeout(() => {
+            btn.style.transform = '';
+          }, 150);
         }
       });
+    });
+
+    // Add smooth scrolling for navigation links
+    document.querySelectorAll('nav a[href^="#"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Add keyboard support for search
+    document.getElementById('searchInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.target.value = '';
+        filterAlumni();
+        e.target.blur();
+      }
     });
   </script>
 
