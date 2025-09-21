@@ -432,6 +432,10 @@ def admin_dashboard():
 def fintech():
     return render_template("fintech2.html")
 
+@app.route("/fintech-alum")
+def fintech_alum():
+    return render_template("fintech2 alumni.html")
+
 @app.route('/alumni-database')
 def alumni_database():
     # Simple session check for admin

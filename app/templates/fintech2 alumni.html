@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fintech Innovators — Alumni Cohort</title>
+  <style>
+    :root{
+      --bg-1: #f6fbff;
+      --bg-2: #eef8ff;
+      --accent-1: #6aa7ff;
+      --accent-2: #83e3ff;
+      --muted: #6b7280;
+      --text-1: #0b3d66;
+      --text-2: #06284a;
+      --panel-bg: white;
+      --panel-shadow: 0 8px 26px rgba(10,28,60,0.04);
+      --panel-border: 1px solid rgba(10,28,60,0.03);
+    }
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: Inter, 'Segoe UI', Roboto, Arial, sans-serif;
+      background: radial-gradient(circle at 10% 8%, rgba(131,227,255,0.10), transparent 18%),
+                  linear-gradient(180deg,var(--bg-1) 0%, var(--bg-2) 100%);
+      color: var(--text-1);
+      -webkit-font-smoothing:antialiased;
+    }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:18px 24px;
+      background:transparent;
+      position:sticky;
+      top:0;
+      z-index:20;
+      position: relative;
+    }
+    header h1{
+      margin:0;
+      font-size:20px;
+      color:var(--text-2);
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      text-align: center;
+    }
+    header .controls{display:flex;gap:10px;align-items:center}
+
+    .btn{
+      padding:8px 12px;
+      border-radius:10px;
+      font-weight:700;
+      cursor:pointer;
+      border: 1px solid rgba(10,30,60,0.06);
+      background: white;
+      color: var(--text-1);
+      transition: all 0.2s ease;
+    }
+    .btn:hover{
+        box-shadow: 0 4px 12px rgba(10,30,60,0.08);
+        transform: translateY(-2px);
+    }
+    .btn.primary{
+      background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      color:#fff;
+      font-weight:700;
+      border: none;
+      box-shadow: 0 8px 20px rgba(106,167,255,0.18);
+    }
+
+    .wrap{max-width:1150px;margin:18px auto;padding:0 16px;display:flex;gap:18px;align-items:stretch}
+    .sidebar{width:300px;display:flex;flex-direction:column;gap:14px}
+
+    .panel{
+      background:var(--panel-bg);
+      border-radius:12px;
+      padding:12px;
+      box-shadow:var(--panel-shadow);
+      border:var(--panel-border);
+    }
+    .panel h3{margin:0 0 8px 0;color:var(--text-2)}
+    .list{max-height:340px;overflow:auto;padding-right:6px}
+    .list ul{list-style:none;margin:0;padding:0}
+    .list li{
+      padding:10px;
+      border-radius:10px;
+      background: linear-gradient(180deg, #fdfeff, #f9fcff);
+      margin-bottom:8px;
+      border:1px solid rgba(12,60,110,0.03);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      transition: all 0.2s ease;
+    }
+    .list li:hover{
+      background:linear-gradient(180deg,#f3fbff,#eef9ff);
+      transform:translateY(-3px);
+      box-shadow:0 10px 24px rgba(20,70,120,0.06);
+      cursor:pointer;
+    }
+
+    /* Alumni-specific styling for members */
+    .alumni-member {
+      border-left: 3px solid var(--accent-1);
+    }
+    .student-member {
+      border-left: 3px solid #10b981;
+    }
+
+    .member-status {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: rgba(106, 167, 255, 0.1);
+      color: var(--accent-1);
+      font-weight: 600;
+    }
+
+    /* chat area */
+    .chat{flex:1;display:flex;flex-direction:column;gap:12px;min-height:520px}
+    .chat-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px;
+      border-radius:12px;
+      background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+      color:white;
+      box-shadow: 0 12px 30px rgba(106,167,255,0.18);
+    }
+    .messages{
+      flex:1;
+      background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(235,249,255,0.95));
+      padding:18px;
+      border-radius:12px;
+      overflow:auto;
+      box-shadow: 0 10px 30px rgba(20,60,110,0.06);
+      border: 1px solid rgba(120,200,255,0.18);
+    }
+    .message{max-width:72%;padding:10px 12px;border-radius:12px;margin-bottom:12px;line-height:1.4;box-shadow: 0 6px 16px rgba(20,70,120,0.04)}
+    .message.alumni{background:linear-gradient(180deg,#e8f3ff,#dff0ff);align-self:flex-start;color:var(--text-1)}
+    .message.student{background:linear-gradient(180deg,#f0fdf4,#dcfce7);align-self:flex-start;color:var(--text-1)}
+    .message.me{background:linear-gradient(180deg,#ffffff,#f1f8ff);align-self:flex-end;color:var(--text-1)}
+    
+    .message-time {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .chat-input{display:flex;gap:10px;padding:12px;border-radius:12px;background:transparent;align-items:center}
+    .chat-input input{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(30,70,120,0.08);outline:none;background:#fff}
+    .chat-input button{
+        padding:10px 14px;
+        border-radius:10px;
+        border:none;
+        background:linear-gradient(90deg,var(--accent-1),var(--accent-2));
+        color:white;
+        cursor:pointer;
+        font-weight:700;
+        box-shadow: 0 8px 20px rgba(106,167,255,0.18);
+        transition: all 0.2s ease;
+    }
+    .chat-input button:hover{
+        box-shadow: 0 4px 12px rgba(10,30,60,0.08);
+        transform: translateY(-2px);
+    }
+
+    /* Professional networking features */
+    .networking-panel {
+      background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(235,249,255,0.9));
+      border: 1px solid rgba(106, 167, 255, 0.2);
+    }
+
+    .quick-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .quick-btn {
+      padding: 4px 8px;
+      font-size: 11px;
+      border-radius: 6px;
+      background: rgba(106, 167, 255, 0.1);
+      color: var(--accent-1);
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .quick-btn:hover {
+      background: rgba(106, 167, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    /* scrollbar style */
+    .list::-webkit-scrollbar, .messages::-webkit-scrollbar{width:8px}
+    .list::-webkit-scrollbar-thumb, .messages::-webkit-scrollbar-thumb{background:linear-gradient(180deg, var(--accent-2), var(--accent-1));border-radius:6px}
+
+    @media (max-width:980px){
+      .wrap{flex-direction:column}
+      .sidebar{width:100%}
+      header h1 { font-size: 16px; position: static; transform: none; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div style="display:flex;gap:12px;align-items:center">
+    <div style="width:auto;height:48px;padding:0 10px;border-radius:10px;background:linear-gradient(120deg,#ffffff,#eef7ff);display:flex;align-items:center;justify-content:center;color:var(--text-1);font-weight:700;border:1px solid rgba(10,30,60,0.05);font-size:12px;text-align:center;">ALUMNI NEXUS</div>
+  </div>
+  <h1>Fintech Innovators</h1>
+    <div class="controls">
+    <!-- Back to Portal button -->
+    <button class="btn" onclick="location.href='{{ url_for('alumni_dashboard') }}'">← Back to Portal</button>
+
+    <!-- Manage button -->
+    <button class="btn primary" onclick="openRules()">⚙ Manage</button>
+    </div>
+
+</header>
+
+<div class="wrap">
+  <aside class="sidebar">
+    <div class="panel">
+      <h3>Alumni Leaders (15)</h3>
+      <div class="list" id="alumniList">
+        <ul>
+          <li class="alumni-member">
+            <div>
+              <div>Rohit Sharma</div>
+              <div style="font-size:11px;color:var(--muted)">VP Engineering, Razorpay</div>
+            </div>
+            <span class="member-status">2012</span>
+          </li>
+          <li class="alumni-member">
+            <div>
+              <div>Priya Singh</div>
+              <div style="font-size:11px;color:var(--muted)">Founder, PayTech Solutions</div>
+            </div>
+            <span class="member-status">2013</span>
+          </li>
+          <li class="alumni-member">
+            <div>
+              <div>Arjun Mehta</div>
+              <div style="font-size:11px;color:var(--muted)">Director, Goldman Sachs</div>
+            </div>
+            <span class="member-status">2011</span>
+          </li>
+          <li class="alumni-member">
+            <div>
+              <div>Neha Kapoor</div>
+              <div style="font-size:11px;color:var(--muted)">Head of Product, Paytm</div>
+            </div>
+            <span class="member-status">2014</span>
+          </li>
+          <li class="alumni-member">
+            <div>
+              <div>Vikram Desai</div>
+              <div style="font-size:11px;color:var(--muted)">Senior PM, PhonePe</div>
+            </div>
+            <span class="member-status">2010</span>
+          </li>
+          <li class="alumni-member">
+            <div>
+              <div>Aditi Rao</div>
+              <div style="font-size:11px;color:var(--muted)">Investment Banker, JP Morgan</div>
+            </div>
+            <span class="member-status">2015</span>
+          </li>
+          <li class="alumni-member">
+            <div>
+              <div>Siddharth Menon</div>
+              <div style="font-size:11px;color:var(--muted)">CTO, CRED</div>
+            </div>
+            <span class="member-status">2016</span>
+          </li>
+          <li class="alumni-member">
+            <div>
+              <div>Kavya Patel</div>
+              <div style="font-size:11px;color:var(--muted)">Blockchain Lead, Polygon</div>
+            </div>
+            <span class="member-status">2017</span>
+          </li>
+          <li class="alumni-member">
+            <div>
+              <div>Ananya Nair</div>
+              <div style="font-size:11px;color:var(--muted)">Quant Analyst, Two Sigma</div>
+            </div>
+            <span class="member-status">2018</span>
+          </li>
+          <li class="alumni-member">
+            <div>
+              <div>Karan Malhotra</div>
+              <div style="font-size:11px;color:var(--muted)">Co-founder, InsurTech Startup</div>
+            </div>
+            <span class="member-status">2012</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Current Students (14)</h3>
+      <div class="list" id="studentList">
+        <ul>
+          <li class="student-member">
+            <div>
+              <div>Aryan Gupta</div>
+              <div style="font-size:11px;color:var(--muted)">CS, 3rd Year</div>
+            </div>
+            <span style="font-size:11px;color:#10b981;font-weight:600">Active</span>
+          </li>
+          <li class="student-member">
+            <div>
+              <div>Isha Sharma</div>
+              <div style="font-size:11px;color:var(--muted)">ECE, 2nd Year</div>
+            </div>
+            <span style="font-size:11px;color:#10b981;font-weight:600">Active</span>
+          </li>
+          <li class="student-member">
+            <div>
+              <div>Rajat Arora</div>
+              <div style="font-size:11px;color:var(--muted)">IT, 3rd Year</div>
+            </div>
+            <span style="font-size:11px;color:#10b981;font-weight:600">Active</span>
+          </li>
+          <li class="student-member">
+            <div>
+              <div>Mehul Joshi</div>
+              <div style="font-size:11px;color:var(--muted)">CS, 1st Year</div>
+            </div>
+            <span style="font-size:11px;color:#f59e0b;font-weight:600">New</span>
+          </li>
+          <li class="student-member">
+            <div>
+              <div>Tanvi Chawla</div>
+              <div style="font-size:11px;color:var(--muted)">ECE, 2nd Year</div>
+            </div>
+            <span style="font-size:11px;color:#10b981;font-weight:600">Active</span>
+          </li>
+          <li class="student-member">
+            <div>
+              <div>Aditya Jain</div>
+              <div style="font-size:11px;color:var(--muted)">ME, 3rd Year</div>
+            </div>
+            <span style="font-size:11px;color:#10b981;font-weight:600">Active</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="panel networking-panel">
+      <h3>Quick Actions</h3>
+      <div class="quick-actions">
+        <button class="quick-btn" onclick="shareOpportunity()">📢 Share Opportunity</button>
+        <button class="quick-btn" onclick="requestMentorship()">🤝 Offer Mentorship</button>
+        <button class="quick-btn" onclick="scheduleCall()">📅 Schedule Call</button>
+        <button class="quick-btn" onclick="shareResources()">📚 Share Resources</button>
+      </div>
+    </div>
+  </aside>
+
+  <section class="chat">
+    <div class="chat-header">
+      <div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.9)">Professional Group • Fintech Innovators</div>
+        <div style="font-weight:700;font-size:16px">Alumni Leadership Chat</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn" onclick="openRules()">Group Settings</button>
+        <button class="btn" onclick="viewMembers()">29 Members</button>
+      </div>
+    </div>
+
+    <div class="messages panel" id="chatMessages">
+      <div class="message alumni">
+        <strong>Rohit Sharma</strong> • <span style="font-size:11px;color:var(--muted)">VP Engineering, Razorpay</span>
+        <div style="font-size:13px;margin-top:6px">Welcome everyone! Excited to connect with both fellow alumni and current students. Let's make this a valuable networking space.</div>
+        <div class="message-time">Today 9:15 AM</div>
+      </div>
+      
+      <div class="message student">
+        <strong>Aryan Gupta</strong> • <span style="font-size:11px;color:var(--muted)">CS Student</span>
+        <div style="font-size:13px;margin-top:6px">Thank you for creating this group! Really looking forward to learning from everyone's experience in fintech.</div>
+        <div class="message-time">Today 9:22 AM</div>
+      </div>
+      
+      <div class="message alumni">
+        <strong>Priya Singh</strong> • <span style="font-size:11px;color:var(--muted)">Founder, PayTech Solutions</span>
+        <div style="font-size:13px;margin-top:6px">I'll be sharing some internship opportunities at our startup next week. We're looking for talented students interested in blockchain payments.</div>
+        <div class="message-time">Today 10:05 AM</div>
+      </div>
+      
+      <div class="message alumni">
+        <strong>Arjun Mehta</strong> • <span style="font-size:11px;color:var(--muted)">Director, Goldman Sachs</span>
+        <div style="font-size:13px;margin-top:6px">@Priya Singh Great initiative! I can also share some quantitative finance roles we have opening up for summer interns.</div>
+        <div class="message-time">Today 10:15 AM</div>
+      </div>
+      
+      <div class="message student">
+        <strong>Isha Sharma</strong> • <span style="font-size:11px;color:var(--muted)">ECE Student</span>
+        <div style="font-size:13px;margin-top:6px">This is amazing! Would love to learn more about the blockchain space. Are there any recommended courses or certifications?</div>
+        <div class="message-time">Today 11:30 AM</div>
+      </div>
+    </div>
+
+    <div class="chat-input">
+      <input id="chatInput" placeholder="Share insights, opportunities, or ask questions..." onkeydown="if(event.key==='Enter') sendMsg()" />
+      <button onclick="sendMsg()">Send</button>
+    </div>
+  </section>
+</div>
+
+<div id="rulesModal" style="display:none;position:fixed;inset:0;background:rgba(5,20,40,0.5);align-items:center;justify-content:center;z-index:60">
+  <div class="panel" style="max-width:520px;padding:18px;">
+    <h3 style="margin:0 0 8px 0;color:var(--text-2)">Alumni Cohort Management</h3>
+    <p style="color:var(--muted);margin-top:6px">Set guidelines for professional networking and mentorship within this cohort.</p>
+    
+    <div style="margin: 15px 0;">
+      <label style="display: block; margin-bottom: 5px; font-weight: 600;">Group Guidelines:</label>
+      <textarea id="rulesText" rows="4" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(30,70,120,0.06);margin-top:6px;background:#fdfeff;color:var(--text-1);">• Focus on fintech, blockchain, and financial services discussions
+• Share opportunities, resources, and professional insights
+• Maintain respectful and professional communication
+• Students: Ask thoughtful questions and be open to feedback
+• Alumni: Provide constructive mentorship and guidance</textarea>
+    </div>
+
+    <div style="margin: 15px 0;">
+      <label style="display: block; margin-bottom: 8px; font-weight: 600;">Moderation Settings:</label>
+      <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+        <label style="display: flex; align-items: center; gap: 5px;">
+          <input type="checkbox" checked> Allow file sharing
+        </label>
+        <label style="display: flex; align-items: center; gap: 5px;">
+          <input type="checkbox" checked> Allow external links
+        </label>
+        <label style="display: flex; align-items: center; gap: 5px;">
+          <input type="checkbox"> Moderate student posts
+        </label>
+      </div>
+    </div>
+    
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:15px">
+      <button class="btn" onclick="closeRules()">Cancel</button>
+      <button class="btn primary" onclick="saveRules()">Save Settings</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function sendMsg(){
+    const input = document.getElementById('chatInput');
+    const txt = input.value.trim();
+    if(!txt) return;
+    const container = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'message me';
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    div.innerHTML = `<strong>You</strong> • <span style="font-size:11px;color:var(--muted)">Alumni</span><div style="font-size:13px;margin-top:6px">${escapeHtml(txt)}</div><div class="message-time">Today ${timeStr}</div>`;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+    input.value = '';
+  }
+
+  function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  function openRules(){ document.getElementById('rulesModal').style.display='flex' }
+  function closeRules(){ document.getElementById('rulesModal').style.display='none' }
+  function saveRules(){ alert('Group settings saved successfully!'); closeRules() }
+
+  function shareOpportunity() {
+    const container = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'message me';
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    div.innerHTML = `<strong>You</strong> • <span style="font-size:11px;color:var(--muted)">Alumni</span><div style="font-size:13px;margin-top:6px">📢 I have some exciting fintech internship opportunities available at my company. DM me if you're interested in blockchain development or quantitative analysis roles.</div><div class="message-time">Today ${timeStr}</div>`;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function requestMentorship() {
+    const container = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'message me';
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    div.innerHTML = `<strong>You</strong> • <span style="font-size:11px;color:var(--muted)">Alumni</span><div style="font-size:13px;margin-top:6px">🤝 Happy to mentor students interested in fintech career paths. Feel free to reach out with questions about industry transitions, skill development, or career planning.</div><div class="message-time">Today ${timeStr}</div>`;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function scheduleCall() {
+    alert('Opening calendar integration for scheduling group calls...');
+  }
+
+  function shareResources() {
+    const container = document.getElementById('chatMessages');
+    const div = document.createElement('div');
+    div.className = 'message me';
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    div.innerHTML = `<strong>You</strong> • <span style="font-size:11px;color:var(--muted)">Alumni</span><div style="font-size:13px;margin-top:6px">📚 I'll compile a list of essential fintech resources, courses, and reading materials. Will share the document by end of week!</div><div class="message-time">Today ${timeStr}</div>`;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function viewMembers() {
+    alert('Viewing all 29 cohort members (15 Alumni + 14 Students)');
+  }
+</script>
+
+</body>
+</html>
